@@ -5,6 +5,7 @@
 #include "mfunc.h"
 #include "punit.h"
 #include "pconst.h"
+#include "dcell.h"
 
 
 int main(int argc,char** argv)
@@ -37,11 +38,19 @@ int main(int argc,char** argv)
     }
     
     {
+        Dcell test;
+        //test.CLP << 1,0,0,0,2,0,0,0,3;
+        test.POS.resize(2,3);
+        test.POS = Eigen::MatrixXd::Random(2,3);
+        
         GLOG->out_setprecision(10);
-        GLOG->out_stream() << "NCOR=" << GMPI->ncore() << endl;
-        GLOG->out_stream() << Legendre2(l_angs) << endl;
-        GLOG->out_stream() << epsilon(1,3,2) << endl;
-        GLOG->stream() << "RANK=" << GMPI->rank() << endl;
+        //GLOG->out_stream() << "NCOR=" << GMPI->ncore() << endl;
+        //GLOG->out_stream() << Legendre2(l_angs) << endl;
+        GLOG->out_stream() << test.CLP << endl;
+        GLOG->out_stream() << test.POS << endl;
+        GLOG->out_stream() << test.POS.row(1)*test.CLP.inverse() << endl;
+        //test.POS.row(1)
+        //GLOG->stream() << "RANK=" << GMPI->rank() << endl;
         //if(INPUT.calculation=="test")
         //{}
         //else if(INPUT.calculation=="density") {Density::Routine();}

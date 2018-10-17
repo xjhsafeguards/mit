@@ -3,12 +3,13 @@ cmake_minimum_required (VERSION 3.0)
 #set your own eigen
 #set(PATH_TO_EIGEN /Users/jianhangxu/Repos/eigen-git-mirror)
 
-list (APPEND CMAKE_CXX_FLAGS "-std=c++11")		# c++11
 
 project(mit)
 # The version number.
 set (MIT_VERSION_MAJOR 0)
 set (MIT_VERSION_MINOR 0)
+
+list (APPEND CMAKE_CXX_FLAGS "-std=c++11")
 
 include_directories(${PATH_TO_EIGEN})
 include_directories(${CMAKE_CURRENT_LIST_DIR}/include)
