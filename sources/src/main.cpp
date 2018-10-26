@@ -40,9 +40,15 @@ int main(int argc,char** argv)
     {
         Dcell test;
         //test.CLP << 1,0,0,0,2,0,0,0,3;
-        test.POS.resize(2,3);
+        //test.POS.resize(2,3);
         test.POS = Eigen::MatrixXd::Random(2,3);
-        
+        Eigen::Matrix<double,Eigen::Dynamic,3> testm(2,3);
+        GLOG->out_stream() << testm << endl<< endl ;
+        testm = test.POS;
+        GLOG->out_stream() << testm << endl<< endl;
+        test.POS.col(1) << 1,2;
+        GLOG->out_stream() << testm << endl<< endl;
+        GLOG->out_stream() << test.POS << endl;
         GLOG->out_setprecision(10);
         //GLOG->out_stream() << "NCOR=" << GMPI->ncore() << endl;
         //GLOG->out_stream() << Legendre2(l_angs) << endl;
