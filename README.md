@@ -2,7 +2,13 @@
 
 Molecule Investigation Toolkit
 
-### Developer ###
+## Developer ##
 
-*Jianhang Xu
-*[jianhang.xu@temple.edu](mailto:jianhang.xu@temple.edu)
+* Jianhang Xu: [jianhang.xu@temple.edu](mailto:jianhang.xu@temple.edu)
+
+## Installment ##
+
+## Classes ##
+### Data
+
+* 
