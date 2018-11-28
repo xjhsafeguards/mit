@@ -1,0 +1,20 @@
+calculation animate_water 
+type 2 
+#ensemble npt
+
+in_file  scan.in
+# geo_file ./try.txt
+# cel_file ./water.cel
+# wan_file ./water.wfc
+# out_file  output.txt
+
+ntype  2
+atom_num 1 2 
+atom_name O H
+atom_mass  16 2
+
+celldm1 15
+unitconv 1
+
+delta 6
+displacement -0.005

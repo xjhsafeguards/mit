@@ -1,0 +1,41 @@
+calculation wair
+type 0 
+ensemble npt
+
+# in_file  ../test_bond
+geo_file ../ice.pos
+wan_file ../ice.wfc
+cel_file ../ice.cel
+# out_file  output.txt
+
+ss_start 20000
+ss_stop 57020 
+ss_step 10
+dt 0.00241889
+
+T 273
+ntype  2
+nband 384
+atom_num  96 192
+atom_name O H
+atom_mass  16 1
+
+#celldm1  25.42240484
+#celldm2  29.31330776
+#celldm3  27.61115515
+#celldm3  94.4863438871313
+
+cutoff 0
+alpha 3.5
+delta 500
+#eps 0.01
+
+#pos_start 0 1
+#thicken 50
+upper_limit 3000 cm-1
+#unitconv 1
+#OH_distance 1.24
+#OO_distance 3.5
+#HOO_angle  30
+#displacement -5
+#pos_start 20 30

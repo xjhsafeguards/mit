@@ -1,0 +1,40 @@
+ --- THE H-BOND NETWORK OF IONS --- 
+ HB_number        accept_count       percentage(%)
+         0                   0                   0
+         1                   5                 100
+         2                   0                   0
+         3                   0                   0
+         4                   0                   0
+         5                   0                   0
+         6                   0                   0
+         7                   0                   0
+         8                   0                   0
+         9                   0                   0
+ HB_number        donate_count       percentage(%)
+         0                   0                   0
+         1                   5                 100
+         2                   0                   0
+         3                   0                   0
+         4                   0                   0
+         5                   0                   0
+         6                   0                   0
+         7                   0                   0
+         8                   0                   0
+         9                   0                   0
+ Counting for ions = 5
+ Average accept HBs for ions is 1
+ Average donate HBs for ions is 1
+ --- THE H-BOND NETWORK OF WATER MOLECLUES --- 
+ HB_number            HB_count       percentage(%)
+         0                   0                   0
+         1                   5        0.7874015748
+         2                  70         11.02362205
+         3                 180         28.34645669
+         4                 325         51.18110236
+         5                  55         8.661417323
+         6                   0                   0
+         7                   0                   0
+         8                   0                   0
+         9                   0                   0
+ Average accept HBs for water molecules is 1.779527559
+ Average donate HBs for water molecules is 1.779527559

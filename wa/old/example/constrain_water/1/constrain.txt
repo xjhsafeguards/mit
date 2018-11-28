@@ -1,0 +1,384 @@
+CONSTRAINS
+382
+'distance'      1  129
+'distance'      1  130
+'planar_angle'  129  1  130
+'distance'      2  131
+'distance'      2  132
+'planar_angle'  131  2  132
+'distance'      3  133
+'distance'      3  134
+'planar_angle'  133  3  134
+'distance'      4  135
+'distance'      4  136
+'planar_angle'  135  4  136
+'distance'      5  137
+'distance'      5  138
+'planar_angle'  137  5  138
+'distance'      6  139
+'distance'      6  140
+'planar_angle'  139  6  140
+'distance'      7  141
+'distance'      7  142
+'planar_angle'  141  7  142
+'distance'      8  143
+'distance'      8  144
+'planar_angle'  143  8  144
+'distance'      9  145
+'distance'      9  146
+'planar_angle'  145  9  146
+'distance'      10  147
+'distance'      11  148
+'distance'      11  149
+'planar_angle'  148  11  149
+'distance'      12  150
+'distance'      12  151
+'planar_angle'  150  12  151
+'distance'      13  152
+'distance'      13  153
+'planar_angle'  152  13  153
+'distance'      14  154
+'distance'      14  155
+'planar_angle'  154  14  155
+'distance'      15  156
+'distance'      15  157
+'planar_angle'  156  15  157
+'distance'      16  158
+'distance'      16  159
+'planar_angle'  158  16  159
+'distance'      17  160
+'distance'      17  161
+'planar_angle'  160  17  161
+'distance'      18  162
+'distance'      18  163
+'planar_angle'  162  18  163
+'distance'      19  164
+'distance'      19  165
+'planar_angle'  164  19  165
+'distance'      20  166
+'distance'      20  167
+'planar_angle'  166  20  167
+'distance'      21  168
+'distance'      21  169
+'planar_angle'  168  21  169
+'distance'      22  170
+'distance'      22  171
+'planar_angle'  170  22  171
+'distance'      23  172
+'distance'      23  173
+'planar_angle'  172  23  173
+'distance'      24  174
+'distance'      24  175
+'planar_angle'  174  24  175
+'distance'      25  176
+'distance'      25  177
+'planar_angle'  176  25  177
+'distance'      26  178
+'distance'      26  179
+'planar_angle'  178  26  179
+'distance'      27  180
+'distance'      27  181
+'planar_angle'  180  27  181
+'distance'      28  182
+'distance'      28  183
+'planar_angle'  182  28  183
+'distance'      29  184
+'distance'      29  185
+'planar_angle'  184  29  185
+'distance'      30  186
+'distance'      30  187
+'planar_angle'  186  30  187
+'distance'      31  188
+'distance'      31  189
+'planar_angle'  188  31  189
+'distance'      32  190
+'distance'      32  191
+'planar_angle'  190  32  191
+'distance'      33  192
+'distance'      33  193
+'planar_angle'  192  33  193
+'distance'      34  194
+'distance'      34  195
+'planar_angle'  194  34  195
+'distance'      35  196
+'distance'      35  197
+'planar_angle'  196  35  197
+'distance'      36  198
+'distance'      36  199
+'planar_angle'  198  36  199
+'distance'      37  200
+'distance'      37  201
+'planar_angle'  200  37  201
+'distance'      38  202
+'distance'      38  203
+'planar_angle'  202  38  203
+'distance'      39  204
+'distance'      39  205
+'planar_angle'  204  39  205
+'distance'      40  206
+'distance'      40  207
+'planar_angle'  206  40  207
+'distance'      41  208
+'distance'      41  209
+'planar_angle'  208  41  209
+'distance'      42  210
+'distance'      42  211
+'planar_angle'  210  42  211
+'distance'      43  212
+'distance'      43  213
+'planar_angle'  212  43  213
+'distance'      44  214
+'distance'      44  215
+'planar_angle'  214  44  215
+'distance'      45  216
+'distance'      45  217
+'planar_angle'  216  45  217
+'distance'      46  218
+'distance'      46  219
+'planar_angle'  218  46  219
+'distance'      47  220
+'distance'      47  221
+'planar_angle'  220  47  221
+'distance'      48  222
+'distance'      48  223
+'planar_angle'  222  48  223
+'distance'      49  224
+'distance'      49  225
+'planar_angle'  224  49  225
+'distance'      50  226
+'distance'      50  227
+'planar_angle'  226  50  227
+'distance'      51  228
+'distance'      51  229
+'planar_angle'  228  51  229
+'distance'      52  230
+'distance'      52  231
+'planar_angle'  230  52  231
+'distance'      53  232
+'distance'      53  233
+'planar_angle'  232  53  233
+'distance'      54  234
+'distance'      54  235
+'planar_angle'  234  54  235
+'distance'      55  236
+'distance'      55  237
+'planar_angle'  236  55  237
+'distance'      56  238
+'distance'      56  239
+'planar_angle'  238  56  239
+'distance'      57  240
+'distance'      57  241
+'planar_angle'  240  57  241
+'distance'      58  242
+'distance'      58  243
+'planar_angle'  242  58  243
+'distance'      59  244
+'distance'      59  245
+'planar_angle'  244  59  245
+'distance'      60  246
+'distance'      60  247
+'planar_angle'  246  60  247
+'distance'      61  248
+'distance'      61  249
+'planar_angle'  248  61  249
+'distance'      62  250
+'distance'      62  251
+'planar_angle'  250  62  251
+'distance'      63  252
+'distance'      63  253
+'planar_angle'  252  63  253
+'distance'      64  254
+'distance'      64  255
+'planar_angle'  254  64  255
+'distance'      65  256
+'distance'      65  257
+'planar_angle'  256  65  257
+'distance'      66  258
+'distance'      66  259
+'planar_angle'  258  66  259
+'distance'      67  260
+'distance'      67  261
+'planar_angle'  260  67  261
+'distance'      68  262
+'distance'      68  263
+'planar_angle'  262  68  263
+'distance'      69  264
+'distance'      69  265
+'planar_angle'  264  69  265
+'distance'      70  266
+'distance'      70  267
+'planar_angle'  266  70  267
+'distance'      71  268
+'distance'      71  269
+'planar_angle'  268  71  269
+'distance'      72  270
+'distance'      72  271
+'planar_angle'  270  72  271
+'distance'      73  272
+'distance'      73  273
+'planar_angle'  272  73  273
+'distance'      74  274
+'distance'      74  275
+'planar_angle'  274  74  275
+'distance'      75  276
+'distance'      75  277
+'planar_angle'  276  75  277
+'distance'      76  278
+'distance'      76  279
+'planar_angle'  278  76  279
+'distance'      77  280
+'distance'      77  281
+'planar_angle'  280  77  281
+'distance'      78  282
+'distance'      78  283
+'planar_angle'  282  78  283
+'distance'      79  284
+'distance'      79  285
+'planar_angle'  284  79  285
+'distance'      80  286
+'distance'      80  287
+'planar_angle'  286  80  287
+'distance'      81  288
+'distance'      81  289
+'planar_angle'  288  81  289
+'distance'      82  290
+'distance'      82  291
+'planar_angle'  290  82  291
+'distance'      83  292
+'distance'      83  293
+'planar_angle'  292  83  293
+'distance'      84  294
+'distance'      84  295
+'planar_angle'  294  84  295
+'distance'      85  296
+'distance'      85  297
+'planar_angle'  296  85  297
+'distance'      86  298
+'distance'      86  299
+'planar_angle'  298  86  299
+'distance'      87  300
+'distance'      87  301
+'planar_angle'  300  87  301
+'distance'      88  302
+'distance'      88  303
+'planar_angle'  302  88  303
+'distance'      89  304
+'distance'      89  305
+'planar_angle'  304  89  305
+'distance'      90  306
+'distance'      90  307
+'planar_angle'  306  90  307
+'distance'      91  308
+'distance'      91  309
+'planar_angle'  308  91  309
+'distance'      92  310
+'distance'      92  311
+'planar_angle'  310  92  311
+'distance'      93  312
+'distance'      93  313
+'planar_angle'  312  93  313
+'distance'      94  314
+'distance'      94  315
+'planar_angle'  314  94  315
+'distance'      95  316
+'distance'      95  317
+'planar_angle'  316  95  317
+'distance'      96  318
+'distance'      96  319
+'planar_angle'  318  96  319
+'distance'      97  320
+'distance'      97  321
+'planar_angle'  320  97  321
+'distance'      98  322
+'distance'      98  323
+'planar_angle'  322  98  323
+'distance'      99  324
+'distance'      99  325
+'planar_angle'  324  99  325
+'distance'      100  326
+'distance'      100  327
+'planar_angle'  326  100  327
+'distance'      101  328
+'distance'      101  329
+'planar_angle'  328  101  329
+'distance'      102  330
+'distance'      102  331
+'planar_angle'  330  102  331
+'distance'      103  332
+'distance'      103  333
+'planar_angle'  332  103  333
+'distance'      104  334
+'distance'      104  335
+'planar_angle'  334  104  335
+'distance'      105  336
+'distance'      105  337
+'planar_angle'  336  105  337
+'distance'      106  338
+'distance'      106  339
+'planar_angle'  338  106  339
+'distance'      107  340
+'distance'      107  341
+'planar_angle'  340  107  341
+'distance'      108  342
+'distance'      108  343
+'planar_angle'  342  108  343
+'distance'      109  344
+'distance'      109  345
+'planar_angle'  344  109  345
+'distance'      110  346
+'distance'      110  347
+'planar_angle'  346  110  347
+'distance'      111  348
+'distance'      111  349
+'planar_angle'  348  111  349
+'distance'      112  350
+'distance'      112  351
+'planar_angle'  350  112  351
+'distance'      113  352
+'distance'      113  353
+'planar_angle'  352  113  353
+'distance'      114  354
+'distance'      114  355
+'planar_angle'  354  114  355
+'distance'      115  356
+'distance'      115  357
+'planar_angle'  356  115  357
+'distance'      116  358
+'distance'      116  359
+'planar_angle'  358  116  359
+'distance'      117  360
+'distance'      117  361
+'planar_angle'  360  117  361
+'distance'      118  362
+'distance'      118  363
+'planar_angle'  362  118  363
+'distance'      119  364
+'distance'      119  365
+'planar_angle'  364  119  365
+'distance'      120  366
+'distance'      120  367
+'planar_angle'  366  120  367
+'distance'      121  368
+'distance'      121  369
+'planar_angle'  368  121  369
+'distance'      122  370
+'distance'      122  371
+'planar_angle'  370  122  371
+'distance'      123  372
+'distance'      123  373
+'planar_angle'  372  123  373
+'distance'      124  374
+'distance'      124  375
+'planar_angle'  374  124  375
+'distance'      125  376
+'distance'      125  377
+'planar_angle'  376  125  377
+'distance'      126  378
+'distance'      126  379
+'planar_angle'  378  126  379
+'distance'      127  380
+'distance'      127  381
+'planar_angle'  380  127  381
+'distance'      128  382
+'distance'      128  383
+'planar_angle'  382  128  383

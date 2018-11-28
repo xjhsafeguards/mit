@@ -1,0 +1,6 @@
+calculation dftcell
+type 0 
+
+in_file  ../wa/example/0001.cif
+out_file_type in
+

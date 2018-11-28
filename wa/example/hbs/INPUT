@@ -1,0 +1,32 @@
+calculation hbs
+# 0 for read water and ion
+# 1 for read only water
+# 2 for read water with z in range INPUT.parameter[0_1]
+type 2 
+
+# in_file  ../test_bond
+geo_file ../data_nvt/scan/new.pos
+wan_file ../data_nvt/scan/new.wfc
+# cel_file ../../data/scan/water.cel
+# out_file  output.txt
+
+ss_start 20000
+ss_stop 136437 
+#ss_stop 24000
+ss_step 4 
+dt 0.00096756
+
+ntype  2
+nband 256
+atom_num  64 128
+atom_name O H
+atom_mass  16 1
+
+cellp bohr
+23.517 0 0
+0 23.517 0
+0 0 23.517 
+
+# analyzing the z range of H2O 
+parameter 3.1 4 
+

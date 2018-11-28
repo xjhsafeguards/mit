@@ -1,0 +1,1 @@
+snapshot	time	index of ion	numH in ion	position x,y,z

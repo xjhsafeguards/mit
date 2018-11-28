@@ -1,0 +1,14 @@
+calculation reorganize
+type 3 
+
+geo_file ../water.pos
+wan_file ../water.wfc
+
+ntype  2
+nband  256
+atom_num  64 128
+atom_name O H
+atom_mass  16 1
+
+eps 0.0001
+

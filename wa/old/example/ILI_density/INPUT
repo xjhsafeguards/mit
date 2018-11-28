@@ -1,0 +1,26 @@
+calculation density
+type 3 //using ILI
+
+in_file  ./pos_ILI 
+geo_file ./pos
+# out_file  output.txt
+
+ss_start 1
+ss_stop 10
+ss_step 2
+
+ntype  2
+atom_num  128 256
+atom_name O H
+atom_mass  16 1
+
+celldm1  23.517
+celldm3  94.4863438871313
+
+delta 110
+#eps 0.01
+
+#unitconv 1
+#OH_distance 2
+displacement -7 //increase the range of output
+#pos_start 20 30
