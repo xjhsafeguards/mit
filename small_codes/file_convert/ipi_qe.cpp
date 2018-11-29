@@ -9,8 +9,10 @@
 using namespace std;
 
 void read_cel(ifstream& ifs, ofstream& ofs, double unit);
+void read_cel_fast(ifstream& ifs, ofstream& ofs);
 void ofs_label(ofstream& ofs, int sc, double tc);
 ofstream& if2of(ifstream& ifs, ofstream& ofs,double unit,int n);
+ofstream& if2of_fast(ifstream& ifs, ofstream& ofs,int n);
 void write_info(ofstream& of_info, int natom, int snap_count, vector<string>& name);
 
 
@@ -68,27 +70,53 @@ int main(int argc, char** argv){
   ifs >> natom;
   ofs_label(of_cel,snap_count,time_count);
   ofs_label(of_pos,snap_count,time_count);
-  read_cel(ifs,of_cel,unitconv);
-  for(int i=0; i<natom; ++i){
-    ifs >> tmp;
-    name.push_back(tmp);
-    if2of(ifs,of_pos,unitconv,3) << endl;
-    ifs.ignore(500,'\n'); // ignore the words after postion in ifs
+  if(fastcal){
+    read_cel_fast(ifs,of_cel);
+    for(int i=0; i<natom; ++i){
+      ifs >> tmp;
+      name.push_back(tmp);
+      if2of_fast(ifs,of_pos,3) << endl;
+      ifs.ignore(500,'\n'); // ignore the words after postion in ifs
+    }
+    ifs.ignore(500,'\n'); // ignore the natom line in ifs
+    while( ifs.good()){
+      time_count+=time_step;
+      ofs_label(of_cel,++snap_count,time_count);
+      ofs_label(of_pos,snap_count,time_count);
+      read_cel_fast(ifs,of_cel);
+      for(int i=0; i<natom; ++i){
+        ifs >> tmp;
+        assert(name[i]==tmp);
+        if2of_fast(ifs,of_pos,3) << endl;
+        ifs.ignore(500,'\n'); // ignore the words after postion in ifs
+      }
+      cout << "capture snapshot:" << snap_count << "\r" << flush;
+      ifs.ignore(500,'\n'); // ignore the natom line in ifs
+    }
   }
-  ifs.ignore(500,'\n'); // ignore the natom line in ifs
-  while( ifs.good()){
-    time_count+=time_step;
-    ofs_label(of_cel,++snap_count,time_count);
-    ofs_label(of_pos,snap_count,time_count);
+  else{
     read_cel(ifs,of_cel,unitconv);
     for(int i=0; i<natom; ++i){
       ifs >> tmp;
-      assert(name[i]==tmp);
+      name.push_back(tmp);
       if2of(ifs,of_pos,unitconv,3) << endl;
       ifs.ignore(500,'\n'); // ignore the words after postion in ifs
     }
-    cout << "capture snapshot:" << snap_count << "\r" << flush;
     ifs.ignore(500,'\n'); // ignore the natom line in ifs
+    while( ifs.good()){
+      time_count+=time_step;
+      ofs_label(of_cel,++snap_count,time_count);
+      ofs_label(of_pos,snap_count,time_count);
+      read_cel(ifs,of_cel,unitconv);
+      for(int i=0; i<natom; ++i){
+        ifs >> tmp;
+        assert(name[i]==tmp);
+        if2of(ifs,of_pos,unitconv,3) << endl;
+        ifs.ignore(500,'\n'); // ignore the words after postion in ifs
+      }
+      cout << "capture snapshot:" << snap_count << "\r" << flush;
+      ifs.ignore(500,'\n'); // ignore the natom line in ifs
+    }
   }
   write_info(of_info,natom,snap_count,name);
 
@@ -108,15 +136,36 @@ void read_cel(ifstream& ifs, ofstream& ofs, double unit=1){
   ifs.ignore(500,'\n'); // ignore the words after celldm in ifs
 }
 
+void read_cel_fast(ifstream& ifs, ofstream& ofs){
+  string temp;
+  for(int i=0;i<3;++i)
+    ifs >> temp;
+  ofs << setw(15)<< temp << setw(15) << 0.0  << setw(15) << 0.0 << endl;
+  ifs >> temp;
+  ofs << setw(15)<< 0.0  << setw(15) << temp  << setw(15) << 0.0 << endl;
+  ifs >> temp;
+  ofs << setw(15)<< 0.0  << setw(15) << 0.0  << setw(15) << temp << endl;
+  ifs.ignore(500,'\n'); // ignore the words after celldm in ifs
+}
+
 void ofs_label(ofstream& ofs, int sc, double tc){
-  ofs << sc << "  " << tc << endl;
+  ofs << setw(10) << sc << setw(15) << tc << endl;
 }
 
 ofstream& if2of(ifstream& ifs, ofstream& ofs,double unit=1,int n=1){
     double tmp;
     for(int i=0;i<n;i++){
         ifs >> tmp;
-        ofs << tmp*unit << " ";
+        ofs << setw(15) <<tmp*unit;
+    }
+    return ofs;
+}
+
+ofstream& if2of_fast(ifstream& ifs, ofstream& ofs,int n=1){
+    double tmp;
+    for(int i=0;i<n;i++){
+        ifs >> tmp;
+        ofs << setw(15) << tmp;
     }
     return ofs;
 }

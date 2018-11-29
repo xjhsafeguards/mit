@@ -6,7 +6,14 @@ Molecule Investigation Toolkit
 * Jianhang Xu: [jianhang.xu@temple.edu](mailto:jianhang.xu@temple.edu)
 
 ## Small code usage
-* 
+
+### File convert
+#### Qe_deepmd
+
+#### Ipi_qe
+Read in Ipi output file pos.xyz write to qe format .pos and .cel file
+* options
+> ./ipi_qe.x -p output_prefix -n input_name -t time_step -angs -f
 
 ## Install ##
 
