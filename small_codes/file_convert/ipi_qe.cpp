@@ -87,10 +87,10 @@ int main(int argc, char** argv){
       for(int i=0; i<natom; ++i){
         ifs >> tmp;
         assert(name[i]==tmp);
-        if2of_fast(ifs,of_pos,3) << endl;
+        if2of_fast(ifs,of_pos,3) << "\n";
         ifs.ignore(500,'\n'); // ignore the words after postion in ifs
       }
-      cout << "capture snapshot:" << snap_count << "\r" << flush;
+      cout << "capture snapshot:" << snap_count << "\r";
       ifs.ignore(500,'\n'); // ignore the natom line in ifs
     }
   }
@@ -111,7 +111,7 @@ int main(int argc, char** argv){
       for(int i=0; i<natom; ++i){
         ifs >> tmp;
         assert(name[i]==tmp);
-        if2of(ifs,of_pos,unitconv,3) << endl;
+        if2of(ifs,of_pos,unitconv,3) << "\n";
         ifs.ignore(500,'\n'); // ignore the words after postion in ifs
       }
       cout << "capture snapshot:" << snap_count << "\r" << flush;
@@ -128,11 +128,11 @@ void read_cel(ifstream& ifs, ofstream& ofs, double unit=1){
   string temp;
   for(int i=0;i<3;++i)
     ifs >> temp;
-  ofs << setw(15)<< stod(temp)*unit  << setw(15) << 0.0  << setw(15) << 0.0 << endl;
+  ofs << setw(15)<< stod(temp)*unit  << setw(15) << 0.0  << setw(15) << 0.0 << "\n";
   ifs >> temp;
-  ofs << setw(15)<< 0.0  << setw(15) << stod(temp)*unit  << setw(15) << 0.0 << endl;
+  ofs << setw(15)<< 0.0  << setw(15) << stod(temp)*unit  << setw(15) << 0.0 << "\n";
   ifs >> temp;
-  ofs << setw(15)<< 0.0  << setw(15) << 0.0  << setw(15) << stod(temp)*unit << endl;
+  ofs << setw(15)<< 0.0  << setw(15) << 0.0  << setw(15) << stod(temp)*unit << "\n";
   ifs.ignore(500,'\n'); // ignore the words after celldm in ifs
 }
 
@@ -140,16 +140,16 @@ void read_cel_fast(ifstream& ifs, ofstream& ofs){
   string temp;
   for(int i=0;i<3;++i)
     ifs >> temp;
-  ofs << setw(15)<< temp << setw(15) << 0.0  << setw(15) << 0.0 << endl;
+  ofs << setw(15)<< temp << setw(15) << 0.0  << setw(15) << 0.0 << "\n";
   ifs >> temp;
-  ofs << setw(15)<< 0.0  << setw(15) << temp  << setw(15) << 0.0 << endl;
+  ofs << setw(15)<< 0.0  << setw(15) << temp  << setw(15) << 0.0 << "\n";
   ifs >> temp;
-  ofs << setw(15)<< 0.0  << setw(15) << 0.0  << setw(15) << temp << endl;
+  ofs << setw(15)<< 0.0  << setw(15) << 0.0  << setw(15) << temp << "\n";
   ifs.ignore(500,'\n'); // ignore the words after celldm in ifs
 }
 
 void ofs_label(ofstream& ofs, int sc, double tc){
-  ofs << setw(10) << sc << setw(15) << tc << endl;
+  ofs << setw(10) << sc << setw(15) << tc << "\n";
 }
 
 ofstream& if2of(ifstream& ifs, ofstream& ofs,double unit=1,int n=1){
@@ -171,15 +171,15 @@ ofstream& if2of_fast(ifstream& ifs, ofstream& ofs,int n=1){
 }
 
 void write_info(ofstream& of_info, int natom, int snap_count, vector<string>& name){
-  of_info << "num of atoms: " << natom << endl;
-  of_info << "num of snapshots " << snap_count << endl;
-  of_info << "atoms" << endl;
+  of_info << "num of atoms: " << natom << "\n";
+  of_info << "num of snapshots " << snap_count << "\n";
+  of_info << "atoms" << "\n";
   map<string,int> name_count;
   for(auto it=name.cbegin(); it!=name.cend(); ++it){
-    of_info << *it << endl;
+    of_info << *it << "\n";
     ++name_count[*it];
   }
   for(auto it=name_count.cbegin(); it!=name_count.cend(); ++it){
-    of_info << it->first << ": " << it->second  << endl;
+    of_info << it->first << ": " << it->second  << "\n";
   }
 }

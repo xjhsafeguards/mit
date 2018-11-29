@@ -15,6 +15,11 @@ Read in Ipi output file pos.xyz write to qe format .pos and .cel file
 * options
 > ./ipi_qe.x -p output_prefix -n input_name -t time_step -angs -f
 
+### Read properties
+#### Qe_volume
+Read volume and density in QE output .cel write to given filename 
+* options
+> ./qe_volume.x -n input_name -o output_name -m mass_of_system -angs -f
 ## Install ##
 
 ## Classes in mit ##
