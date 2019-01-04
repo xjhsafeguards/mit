@@ -22,7 +22,9 @@ Read volume and density in QE output .cel write to given filename
 > ./qe_volume.x -n input_name -o output_name -m mass_of_system -angs -f
 ## Install ##
 
-## Classes in mit ##
+## Classes in mit/mit ##
+
+## Classes in mit cmake version ##
 
 ### Global
 #### Glog:
