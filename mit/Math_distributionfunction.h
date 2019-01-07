@@ -6,6 +6,8 @@
 #include <iostream>
 #include <cmath>
 
+#include "Math_const.h"
+
 class Distributionfunction{
     
     //range to calculate distribution function
@@ -37,7 +39,7 @@ public:
     
     //read in data to calculate
     void read(const std::vector<double> & data_in);
-    void read(typename std::vector<double>::iterator begin,typename std::vector<double>::iterator end);
+    void read(typename std::vector<double>::const_iterator begin,typename std::vector<double>::const_iterator end);
     
     //get result
     std::vector<double> get_x() const;
