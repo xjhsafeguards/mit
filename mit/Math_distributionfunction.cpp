@@ -11,7 +11,7 @@ void Distributionfunction::read(typename std::vector<double>::const_iterator beg
 std::vector<double> Distributionfunction::get_x() const{
     std::vector<double> result;
     double tmp=lower+step_length/2;
-    for(int c=0;c<=steps;++c,tmp+=step_length){
+    for(int c=0;c<steps;++c,tmp+=step_length){
         result.push_back(tmp);
     }
     return std::move(result);
@@ -29,6 +29,9 @@ std::vector<double> Distributionfunction::get_y() const{
             std::cerr << "Distributionfunction_Wrong_Dimension: " << dimension << std::endl;
     }
     return std::move(result);
+}
+const std::vector<int>& Distributionfunction::get_ycount() const{
+    return yresult;
 }
 void Distributionfunction::D1_y(std::vector<double>& result) const{
     for(auto it=yresult.cbegin(); it!=yresult.cend(); ++it){

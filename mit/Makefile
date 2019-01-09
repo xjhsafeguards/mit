@@ -11,7 +11,7 @@ all:${EXECUTABLE}
 	${CC} ${OPTION} -c $< -o $@
 
 ${EXECUTABLE}:${OBJS}
-	${CC} ${OPTION} -o ../../${EXECUTABLE} ${OBJS}
+	${CC} ${OPTION} -o ${EXECUTABLE} ${OBJS}
 
 .PHONY : clean
 clean:

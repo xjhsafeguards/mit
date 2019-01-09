@@ -13,9 +13,10 @@ namespace physics_unit {
     const double l_cm = 1e8;    // centimeter
     const double l_mm = 1e7;    // milimeter
     const double l_nm = 10;     // nanometer
-    // mass 1 = kg
-    const double m_kg = 1;  // kilogram
-    const double m_g = 1e-3; // gram
+    // mass 1 = atomic mass
+    const double m_au = 1
+    const double m_kg = 1e3*m_g;  // kilogram
+    const double m_g = 6.02214082e23; // gram
     // charge 1 = e
     const double c_e = 1;
     const double c_c = 1/1.60217662e-19;

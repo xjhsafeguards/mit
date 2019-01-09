@@ -1,10 +1,10 @@
 #ifndef Math_distributionfunction_H
 #define Math_distributionfunction_H
 
-#include <vector>
 #include <cassert>
-#include <iostream>
 #include <cmath>
+#include <iostream>
+#include <vector>
 
 #include "Math_const.h"
 
@@ -24,7 +24,7 @@ public:
     Distributionfunction(double in_lower=0, double in_upper=1, int in_steps=100): lower(in_lower), upper(in_upper), steps(in_steps){
         set_step_length();
     }
-    ~Distributionfunction();
+    ~Distributionfunction(){};
     
     //set limit
     inline void set_limit(double in_lower, double in_upper);
@@ -41,9 +41,14 @@ public:
     void read(const std::vector<double> & data_in);
     void read(typename std::vector<double>::const_iterator begin,typename std::vector<double>::const_iterator end);
     
+    //reset data
+    inline void reset();
+    inline void reset(double in_lower,double in_upper, int in_steps);
+    
     //get result
     std::vector<double> get_x() const;
     std::vector<double> get_y() const;
+    const std::vector<int>& get_ycount() const;
     
 private:
     void set_step_length(){
@@ -88,5 +93,14 @@ inline void Distributionfunction::set_dimension(int in_D){
 }
 inline void Distributionfunction::set_normalize(double in_norm){
     normalize = in_norm;
+}
+inline void Distributionfunction::reset(){
+    reset_yresult();
+}
+inline void Distributionfunction::reset(double in_lower,double in_upper, int in_steps){
+    lower = in_lower;
+    upper = in_upper;
+    steps = in_steps;
+    set_step_length();
 }
 #endif
