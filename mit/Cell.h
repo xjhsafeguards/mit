@@ -150,7 +150,7 @@ protected:
 
 class Cell{
 public:
-    typedef std::vector<std::shared_ptr<position> > pos_folder;
+    typedef std::vector<std::shared_ptr<position> > pos_folder
     
     //get a pos_folder with certain character
     const pos_folder& get_folder(std::string character){
