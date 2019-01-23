@@ -2,7 +2,7 @@
 #include <chrono>
 
 #include "Math.h"
-#include "Cell.h"
+#include "Cell_position.h"
 
 using namespace std;
 using namespace chrono;
@@ -90,3 +90,20 @@ cout <<  "used "
 << double(duration.count()) * microseconds::period::num / microseconds::period::den
 << " second " << endl;
 */
+
+/*
+ position* p1,*p2,*p3;
+ box bo(Matrix3<double>(2,0,0,0,3,0,0,0,4));
+ auto b=make_shared<box>(bo);
+ p1 = new frac_position(Vector3<double>(0.1,0.5,0.2),b);
+ p2 = new frac_position(Vector3<double>(0.2,0.5,0.2),b);
+ p3 = new frac_position(Vector3<double>(0.1,0.4,0.2),b);
+ cout << p1->distance(*p2) << endl;
+ auto start = system_clock::now();
+ cout << p1->angle(*p2,*p3) << endl;
+ auto end   = system_clock::now();
+ auto duration = duration_cast<microseconds>(end - start);
+ cout <<  "used "
+ << double(duration.count()) * microseconds::period::num / microseconds::period::den
+ << " second " << endl;
+ */

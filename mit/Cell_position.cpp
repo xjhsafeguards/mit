@@ -1,4 +1,4 @@
-#include "Cell.h"
+#include "Cell_position.h"
 
 // distance between this and p
 double frac_position::distance(const position& p) const{

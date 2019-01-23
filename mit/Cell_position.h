@@ -1,9 +1,10 @@
-#ifndef CELL_H
-#define CELL_H
+#ifndef CELL_POSITION_H
+#define CELL_POSITION_H
 
 #include <string>
 #include <vector>
-#include <map>
+#include <memory>
+
 
 #include "Math_linearalgebra.h"
 
@@ -13,7 +14,7 @@ class position;
 class frac_position;
 class cart_position;
 
-class Cell;
+//class Cell;
 
 class box{
 public:
@@ -147,7 +148,7 @@ public:
 protected:
 };
 
-
+/*
 class Cell{
 public:
     typedef std::vector<std::shared_ptr<position> > pos_folder
@@ -165,6 +166,7 @@ protected:
         return data[character];
     }
 };
+ */
 
 #endif
 
