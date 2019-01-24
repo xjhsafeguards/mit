@@ -73,6 +73,7 @@ public:
     //read
     T& operator[](const int i)
     {
+        //std::cout << "(" << x << "," << y << "," << z << ") " << i << std::endl;
         switch(i){
             case 0: return x;
             case 1: return y;
@@ -83,6 +84,7 @@ public:
     }
     const T& operator[](const int i) const
     {
+        //std::cout << "(" << x << "," << y << "," << z << ") " << i << std::endl;
         switch(i){
             case 0: return x;
             case 1: return y;
@@ -411,7 +413,7 @@ public:
         return result.transposition()/det();
     }
     Vector3<T> diagonal() const{
-        return Vector3<T>(Mat[1][1],Mat[2][2],Mat[3][3]);
+        return Vector3<T>(Mat[0][0],Mat[1][1],Mat[2][2]);
     }
     bool orthorhombic() const{
         for(int i=1;i<=3;i++)

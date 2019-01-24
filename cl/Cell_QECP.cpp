@@ -1,11 +1,9 @@
-#include "Cell_Wannier90.h"
+#include "Cell_QECP.h"
 
-std::istream& cell_wannier90::read(std::istream& is){
+std::istream& cell_qecp::read_atoms(std::istream& is){
     assert(box_ptr);
-    double line_count;
-    is >> line_count;
-    is.ignore(500,'\n');
-    is.ignore(500,'\n');
+    is >> snapshot >> time;
+/*
     for(int i=0; i!=line_count; ++i){
         std::shared_ptr<position> tmp = std::make_shared<cart_position>();
         tmp->set_box_ptr(box_ptr);
@@ -19,5 +17,6 @@ std::istream& cell_wannier90::read(std::istream& is){
         }
     }
     //std::cout << "check0: " << atoms_ptrv.size() << std::endl;
+ */
     return is;
 }

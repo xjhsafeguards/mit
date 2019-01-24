@@ -51,7 +51,6 @@ int main(int argc,char** argv){
         {
             if(strncmp(argv[i],"-n",2) == 0){string tmp=argv[++i];filename=tmp;}
             else if(strncmp(argv[i],"-t",2) == 0){string tmp=argv[++i];snapshot_count=stoi(tmp);}
-            else if(strncmp(argv[i],"-w",2) == 0){string tmp=argv[++i];water_parameter::OH_distance=stod(tmp);}
             //else if(strncmp(argv[i],"-angs",5) == 0){assert(!fastcal);unitconv=1.8897161646320723;}
             //else if(strncmp(argv[i],"-t",2) == 0){string tmp=argv[++i];time_step=stod(tmp);}
             //else if(strncmp(argv[i],"-f",2) == 0){fastcal=true;}
@@ -77,13 +76,12 @@ int main(int argc,char** argv){
         mol->read(*cel);
         //cout << "check 3" << endl;
         for(const auto& mol : cel->mols("H2O")){
-            //assert(mol->atoms().size()==3);
             double HCl1 = mol->atoms()[1]->distance(*(cel->atoms()[0]));
             double HCl2 = mol->atoms()[2]->distance(*(cel->atoms()[0]));
             if( HCl1 < HCl2 )
-                cout << setw(20) << mol->atoms()[1]->distance(*(mol->atoms()[0])) - HCl1 << setw(20) << mol->atoms()[1]->angle(*(mol->atoms()[0]),*(cel->atoms()[0])) << setw(20) << mol->atoms()[0]->distance(*(cel->atoms()[0])) << setw(10) << mol->atoms().size()-1 << endl;
+                cout << setw(20) << mol->atoms()[1]->distance(*(mol->atoms()[0])) - HCl1 << setw(20) << mol->atoms()[1]->angle(*(mol->atoms()[0]),*(cel->atoms()[0])) << setw(20) << mol->atoms()[0]->distance(*(cel->atoms()[0])) << endl;
             else
-                cout << setw(20) << mol->atoms()[2]->distance(*(mol->atoms()[0])) - HCl2 << setw(20) << mol->atoms()[2]->angle(*(mol->atoms()[0]),*(cel->atoms()[0])) << setw(20) << mol->atoms()[0]->distance(*(cel->atoms()[0])) << setw(10) << mol->atoms().size()-1 << endl;
+                cout << setw(20) << mol->atoms()[2]->distance(*(mol->atoms()[0])) - HCl2 << setw(20) << mol->atoms()[2]->angle(*(mol->atoms()[0]),*(cel->atoms()[0])) << setw(20) << mol->atoms()[0]->distance(*(cel->atoms()[0])) << endl;
         }
     }
 

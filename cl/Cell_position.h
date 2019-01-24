@@ -53,9 +53,11 @@ protected:
 
 class position{
 public:
+    typedef std::string             type_type;
+    typedef int                     label_type;
     typedef Vector3<double>         data_type;
     typedef std::shared_ptr<box>    box_ptr;
-    
+
     //constructor
     position(){};
     position(const data_type& in_p,const box_ptr& in_b,const std::string& in_type="", int in_label=-1): pos(in_p),box(in_b),type(in_type),label(in_label){}
@@ -67,15 +69,19 @@ public:
     //operations
 
     //set operations
-    void set_box_ptr(const box_ptr& in_b){
-        box = in_b;
-    }
-    void set_position()
+    inline void set_box_ptr(const box_ptr& in_b);
+    //inline void set_box_ptr(std::istream&);
+    inline void set_position(double x,double y,double z);
+    inline void set_position(std::istream&);
+    inline void set_type(const type_type& in_type);
+    inline void set_type(std::istream&);
+    inline void set_label(const label_type& in_label);
     
     //check_type
-    bool check_type(const std::string& in_type) const{
-        return in_type == type;
-    }
+    inline bool check_type(const std::string& in_type) const;
+    
+    //get
+    inline const type_type& get_type() const;
     
     //output position in fraction or cartesian
     virtual data_type frac() const = 0;
@@ -86,14 +92,10 @@ public:
     virtual double angle(const position& p1, const position& p2) const = 0;
     
     // stream operations
-    virtual istream& read(istream& is){
-        is >> pos;
-        return is;
-    }
     
 protected:
-    std::string type;
-    int label;
+    type_type type;
+    label_type label;
     data_type pos;
     box_ptr box;
     
@@ -137,8 +139,6 @@ public:
     virtual double distance(const position& p) const;
     // angle between p1-this-p2 in degree
     virtual double angle(const position& p1, const position& p2) const;
-
-    istream
     
 protected:
 };
@@ -167,6 +167,37 @@ public:
     
 protected:
 };
+
+
+//set operations
+inline void position::set_box_ptr(const box_ptr& in_b){
+    box = in_b;
+}
+inline void position::set_position(double x,double y,double z){
+    pos = data_type(x,y,z);
+}
+inline void position::set_position(std::istream& is){
+    is >> pos;
+}
+inline void position::set_type(const type_type& in_type){
+    type = in_type;
+}
+inline void position::set_type(std::istream& is){
+    is >> type;
+}
+inline void position::set_label(const label_type& in_label){
+    label = in_label;
+}
+
+//check_type
+inline bool position::check_type(const std::string& in_type) const{
+    return in_type == type;
+}
+
+inline const std::string& position::get_type() const{
+    return type;
+}
+
 
 /*
 class Cell{
