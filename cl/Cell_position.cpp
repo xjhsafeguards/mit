@@ -23,6 +23,6 @@ double cart_position::distance(const position& p) const{
 double cart_position::angle(const position& p1, const position& p2) const{
     assert(same_box(p1));
     assert(same_box(p2));
-    return pos.angle_BC(p1.cart(),p2.cart());
+    return pos.angle_BC(p1.cart(),p2.cart(),box->diagonal());
 }
 

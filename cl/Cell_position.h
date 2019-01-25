@@ -25,6 +25,11 @@ public:
     
     //constructor
     box(const data_type& in_cell): celldm(in_cell), inverse_celldm(in_cell.inverse()), is_orthorhombic(in_cell.orthorhombic()){}
+    box(std::istream& is){
+        is >> celldm;
+        inverse_celldm = celldm.inverse();
+        is_orthorhombic = celldm.orthorhombic();
+    }
     box(const box&) = default;
     box(box&&) = default;
     box& operator=(const box&) = default;
@@ -43,6 +48,11 @@ public:
     }
     bool orthorhombic() const{
         return is_orthorhombic;
+    }
+    
+    //set
+    void set_unit(double in_unit){
+        celldm = celldm*in_unit;
     }
     
 protected:
@@ -76,6 +86,7 @@ public:
     inline void set_type(const type_type& in_type);
     inline void set_type(std::istream&);
     inline void set_label(const label_type& in_label);
+    inline void set_unit(double in_unit);
     
     //check_type
     inline bool check_type(const std::string& in_type) const;
@@ -119,6 +130,7 @@ protected:
 
 class frac_position : public position{
 public:
+    using position::position;
     frac_position(const data_type& in_p,const box_ptr& in_b,bool is_f=true): position(in_p,in_b){
         if(!is_f)
             pos = fraction(pos);
@@ -187,6 +199,9 @@ inline void position::set_type(std::istream& is){
 }
 inline void position::set_label(const label_type& in_label){
     label = in_label;
+}
+inline void position::set_unit(double in_unit){
+    pos *= in_unit;
 }
 
 //check_type

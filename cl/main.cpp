@@ -5,6 +5,7 @@
 #include "Cell.h"
 #include "Cell_Wannier90.h"
 #include "Cell_TEMP.h"
+#include "Cell_QECP.h"
 #include "Molecule_water.h"
 
 using namespace std;
@@ -14,12 +15,69 @@ using namespace chrono;
 template<typename T>
 void Print(const vector<T>& inv,ostream& os=cout){
     for( const auto& d: inv)
-        os << setw(10) << d;
+        //os << setw(10) << d;
+        os << d << endl;
     os << endl;
 }
 
+
+int main(int argc,char** argv){
+    
+    ifstream ifs1("/Users/jianhangxu/Documents/2Cl/cl_63H2O_npt_bo_300K/out.10.8129/cl.cel");
+    ifstream ifs2("/Users/jianhangxu/Documents/2Cl/cl_63H2O_npt_bo_300K/out.10.8129/cl.pos");
+    cout << setprecision(15);
+    
+    vector<std::shared_ptr<cell>> cellv;
+    
+    molecule_manip* mol = new water_manip();
+    for(int i=0;i!=22300;++i){
+        std::shared_ptr<cell> cel = make_shared<cell_qecp>(cell_qecp({1,63,126},{"Cl","O","H"}));
+        //cout << "check 1" << endl;
+        cel->read_box(ifs1);
+        cel->read_atoms(ifs2);
+        //cout << "check 2" << endl;
+        
+        
+        //mol->read(*cel);
+        //cout << "check 3" << endl;
+        //cout << endl;
+        /*
+        for(const auto& mol : cel->mols("H2O")){
+            //assert(mol->atoms().size()==3);
+            double HCl1 = mol->atoms()[1]->distance(*(cel->atoms()[0]));
+            double HCl2 = mol->atoms()[2]->distance(*(cel->atoms()[0]));
+            if( HCl1 < HCl2 )
+                cout << setw(20) << mol->atoms()[1]->distance(*(mol->atoms()[0])) - HCl1 << setw(20) << mol->atoms()[1]->angle(*(mol->atoms()[0]),*(cel->atoms()[0])) << setw(20) << mol->atoms()[0]->distance(*(cel->atoms()[0])) << setw(10) << mol->atoms().size()-1 << endl;
+            else
+                cout << setw(20) << mol->atoms()[2]->distance(*(mol->atoms()[0])) - HCl2 << setw(20) << mol->atoms()[2]->angle(*(mol->atoms()[0]),*(cel->atoms()[0])) << setw(20) << mol->atoms()[0]->distance(*(cel->atoms()[0])) << setw(10) << mol->atoms().size()-1 << endl;
+          }
+         */
+        cellv.push_back(cel);
+        cout << "read " << cellv.size() << '\r' << flush;
+       
+    }
+    vector<double> OH;
+    for(auto it = cellv.begin();it!=cellv.end();++it){
+        for( const auto& atom1: (*it)->atoms()){
+            if(atom1->check_type("O"))
+                for( const auto& atom2: (*it)->atoms()){
+                if(atom2->check_type("H"))
+                    OH.push_back(atom1->distance(*atom2));
+                }
+        }
+    }
+    auto Dp = new Distributionfunction(0,6,1000);
+    Dp->set_dimension(3);
+    Dp->read(OH);
+    
+    Print(Dp->get_x());
+    cout << endl;
+    Print(Dp->get_y());
+    
+}
+
 //Read wannier file
-void READ_WAN(){
+void READ_WAN1(){
     ifstream ifs("test_files/Ih_centres.xyz");
     
     cell* cel = new cell_wannier90();
@@ -40,8 +98,61 @@ void READ_WAN(){
     }
 }
 
-int main(int argc,char** argv){
+void READ_WAN2(int argc,char** argv){
+    string filename="test_files/cl.MD.snapshots_1219";
+    int snapshot_count=21;
     
+    if(argc != 1)
+    {
+        for(int i=1; i<argc; ++i)
+        {
+            if(strncmp(argv[i],"-n",2) == 0){string tmp=argv[++i];filename=tmp;}
+            else if(strncmp(argv[i],"-t",2) == 0){string tmp=argv[++i];snapshot_count=stoi(tmp);}
+            else if(strncmp(argv[i],"-w",2) == 0){string tmp=argv[++i];water_parameter::OH_distance=stod(tmp);}
+            //else if(strncmp(argv[i],"-angs",5) == 0){assert(!fastcal);unitconv=1.8897161646320723;}
+            //else if(strncmp(argv[i],"-t",2) == 0){string tmp=argv[++i];time_step=stod(tmp);}
+            //else if(strncmp(argv[i],"-f",2) == 0){fastcal=true;}
+            else{cout << "Read in Unknow tag " << argv[i] << endl;}
+        }
+    }
+    
+    cout << setprecision(15);
+    ifstream ifs(filename);
+    
+    cout << setw(20) << "#O-H" << setw(20) << "O-W" << setw(20) << "Cl-W" << setw(20) << "O-Cl" << setw(10) << ""<< endl;
+    
+    cell* cel = new cell_wannier90();
+    cel->set_box(12.444661365,12.444661365,12.444661365);
+    
+    for(int i=0;i!=snapshot_count;++i){
+        cel->clear();
+        cel->read(ifs);
+        
+        molecule_manip* mol = new water_manip();
+        mol->read(*cel);
+        mol->sort_wans(*cel);
+        
+        cout << endl;
+        //cout << cel->mols("H2O").size()*7 << endl << endl;
+        for(const auto& mol : cel->mols("H2O")){
+            
+            double HCl1 = mol->atoms()[1]->distance(*(cel->atoms()[0]));
+            double HCl2 = mol->atoms()[2]->distance(*(cel->atoms()[0]));
+            if( HCl1 < HCl2 )
+                cout << setw(20) << mol->atoms()[1]->distance(*(mol->atoms()[0])) << setw(20) << mol->atoms()[0]->distance(*(mol->wans()[0])) << setw(20) << mol->wans()[0]->distance(*(cel->atoms()[0])) << setw(20) << mol->atoms()[0]->distance(*(cel->atoms()[0])) << setw(10) << mol->atoms().size()-1 << endl;
+            else
+                cout << setw(20) << mol->atoms()[2]->distance(*(mol->atoms()[0])) << setw(20) << mol->atoms()[0]->distance(*(mol->wans()[1])) << setw(20) << mol->wans()[1]->distance(*(cel->atoms()[0])) << setw(20) << mol->atoms()[0]->distance(*(cel->atoms()[0])) << setw(10) << mol->atoms().size()-1 << endl;
+            //for(const auto& atom : mol->atoms())
+            //cout << atom->get_type() << " " << atom->cart() << endl;
+            //for(const auto& wan : mol->wans())
+            //cout << wan->get_type() << " " << wan->cart() << endl;
+            //cout << mol->atoms().size() << " " << mol->wans().size() << endl;
+        }
+    }
+}
+
+
+void READ_PTC_ANGLE(int argc,char** argv){
     string filename="test_files/cl.MD.snapshots_1219";
     int snapshot_count=21;
     
@@ -65,7 +176,7 @@ int main(int argc,char** argv){
     cell* cel = new cell_temp1();
     cel->set_box(12.444661365,12.444661365,12.444661365);
     
-    cout << setw(20) << "OH - ClH" << setw(20) << "O-H-Cl angle" << setw(20) << "O-Cl" << endl;
+    cout << setw(20) << "#OH - ClH" << setw(20) << "O-H-Cl angle" << setw(20) << "O-Cl" << endl;
     
     for(int i=0;i!=snapshot_count;++i){
         cel->clear();
@@ -76,6 +187,7 @@ int main(int argc,char** argv){
         molecule_manip* mol = new water_manip();
         mol->read(*cel);
         //cout << "check 3" << endl;
+        cout << endl;
         for(const auto& mol : cel->mols("H2O")){
             //assert(mol->atoms().size()==3);
             double HCl1 = mol->atoms()[1]->distance(*(cel->atoms()[0]));
@@ -86,9 +198,7 @@ int main(int argc,char** argv){
                 cout << setw(20) << mol->atoms()[2]->distance(*(mol->atoms()[0])) - HCl2 << setw(20) << mol->atoms()[2]->angle(*(mol->atoms()[0]),*(cel->atoms()[0])) << setw(20) << mol->atoms()[0]->distance(*(cel->atoms()[0])) << setw(10) << mol->atoms().size()-1 << endl;
         }
     }
-
 }
-
 
 
 

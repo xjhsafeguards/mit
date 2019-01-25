@@ -61,8 +61,10 @@ void water_manip::sort_wans(mols_type& out_moleculev){
     assert(out_moleculev[0]->wans().size());
     for(const auto& waterp : out_moleculev){
         const auto& atom_o = waterp->atoms()[0];
+        //sort wans in the descending order of distance to O
         sort(waterp->wans().begin(),waterp->wans().end(),[&, atom_o](std::shared_ptr<position>&w1,std::shared_ptr<position>&w2){return atom_o->distance(*w1)>atom_o->distance(*w2);});
-        if(waterp->atoms()[1]->distance(*(waterp->wans()[0]))>waterp->atoms()[1]->distance(*(waterp->wans()[1])))
+        //if water has more than 1 H, sort wans in the order of H
+        if(waterp->atoms().size()>2 and waterp->atoms()[1]->distance(*(waterp->wans()[0]))>waterp->atoms()[1]->distance(*(waterp->wans()[1])))
             swap(waterp->wans()[0],waterp->wans()[1]);
     }
 }

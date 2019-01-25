@@ -39,6 +39,7 @@ public:
         mols_ptrv.clear();
     }
     
+    //IO
     virtual std::istream& read(std::istream& is){std::cerr << "read not implement"; return is;}
     virtual std::istream& read_box(std::istream& is){std::cerr << "read_box not implement"; return is;}
     virtual std::istream& read_atoms(std::istream& is){std::cerr << "read_atoms not implement"; return is;}
