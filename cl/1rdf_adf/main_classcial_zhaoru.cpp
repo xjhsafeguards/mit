@@ -6,7 +6,6 @@
 #include "Cell_Wannier90.h"
 #include "Cell_TEMP.h"
 #include "Cell_QECP.h"
-#include "Cell_IPI.h"
 #include "Molecule_water.h"
 
 using namespace std;
@@ -27,76 +26,38 @@ int main(int argc,char** argv){
     double OCl_cutoff = 3.7;
     double HCl_cutoff = 3;
     
-    //ifstream ifs1("/Users/jianhangxu/Documents/2Cl/cl_63H2O_npt_bo_300K/out.10.8129/cl.cel");
-    //ifstream ifs2("/Users/jianhangxu/Documents/2Cl/cl_63H2O_npt_bo_300K/out.10.8129/cl.pos");
-    
-    ifstream ifs0("/Users/jianhangxu/Documents/2Cl/Cl_63H2O_pimd/data.pos_0.xyz");
-    ifstream ifs1("/Users/jianhangxu/Documents/2Cl/Cl_63H2O_pimd/data.pos_0.xyz");
-    ifstream ifs2("/Users/jianhangxu/Documents/2Cl/Cl_63H2O_pimd/data.pos_0.xyz");
-    ifstream ifs3("/Users/jianhangxu/Documents/2Cl/Cl_63H2O_pimd/data.pos_0.xyz");
-    ifstream ifs4("/Users/jianhangxu/Documents/2Cl/Cl_63H2O_pimd/data.pos_0.xyz");
-    ifstream ifs5("/Users/jianhangxu/Documents/2Cl/Cl_63H2O_pimd/data.pos_0.xyz");
-    ifstream ifs6("/Users/jianhangxu/Documents/2Cl/Cl_63H2O_pimd/data.pos_0.xyz");
-    ifstream ifs7("/Users/jianhangxu/Documents/2Cl/Cl_63H2O_pimd/data.pos_0.xyz");
+    ifstream ifs1("/Users/jianhangxu/Documents/2Cl/Cl_63H2O_PBE_vdW_cpmd/cl.cel");
+    ifstream ifs2("/Users/jianhangxu/Documents/2Cl/Cl_63H2O_PBE_vdW_cpmd/cl.pos");
+    cout << setprecision(15);
     
     vector<std::shared_ptr<cell>> cellv;
     
     molecule_manip* mol = new water_manip();
-    for(int i=0;i!=48230;++i){
-        std::shared_ptr<cell> cel = make_shared<cell_ipi>();
-        cel->read(ifs0);
-        if(i>20000 and i%10==0)
+    for(int i=0;i!=21220;++i){
+        std::shared_ptr<cell> cel = make_shared<cell_qecp>(cell_qecp({1,63,126},{"Cl","O","H"}));
+        //cout << "check 1" << endl;
+        cel->read_box(ifs1);
+        cel->read_atoms(ifs2);
+        //cout << "check 2" << endl;
+        
+        
+        //mol->read(*cel);
+        //cout << "check 3" << endl;
+        //cout << endl;
+        /*
+        for(const auto& mol : cel->mols("H2O")){
+            //assert(mol->atoms().size()==3);
+            double HCl1 = mol->atoms()[1]->distance(*(cel->atoms()[0]));
+            double HCl2 = mol->atoms()[2]->distance(*(cel->atoms()[0]));
+            if( HCl1 < HCl2 )
+                cout << setw(20) << mol->atoms()[1]->distance(*(mol->atoms()[0])) - HCl1 << setw(20) << mol->atoms()[1]->angle(*(mol->atoms()[0]),*(cel->atoms()[0])) << setw(20) << mol->atoms()[0]->distance(*(cel->atoms()[0])) << setw(10) << mol->atoms().size()-1 << endl;
+            else
+                cout << setw(20) << mol->atoms()[2]->distance(*(mol->atoms()[0])) - HCl2 << setw(20) << mol->atoms()[2]->angle(*(mol->atoms()[0]),*(cel->atoms()[0])) << setw(20) << mol->atoms()[0]->distance(*(cel->atoms()[0])) << setw(10) << mol->atoms().size()-1 << endl;
+          }
+         */
+        if(i>10000)
             cellv.push_back(cel);
         cout << "read " << cellv.size() << '\r' << flush;
-    }
-    for(int i=0;i!=48230;++i){
-        std::shared_ptr<cell> cel = make_shared<cell_ipi>();
-        cel->read(ifs1);
-        if(i>20000 and i%10==0)
-            cellv.push_back(cel);
-        cout << "read1 " << cellv.size() << '\r' << flush;
-    }
-    for(int i=0;i!=48230;++i){
-        std::shared_ptr<cell> cel = make_shared<cell_ipi>();
-        cel->read(ifs2);
-        if(i>20000 and i%10==0)
-            cellv.push_back(cel);
-        cout << "read2 " << cellv.size() << '\r' << flush;
-    }
-    for(int i=0;i!=48230;++i){
-        std::shared_ptr<cell> cel = make_shared<cell_ipi>();
-        cel->read(ifs3);
-        if(i>20000 and i%10==0)
-            cellv.push_back(cel);
-        cout << "read3 " << cellv.size() << '\r' << flush;
-    }
-    for(int i=0;i!=48230;++i){
-        std::shared_ptr<cell> cel = make_shared<cell_ipi>();
-        cel->read(ifs4);
-        if(i>20000 and i%10==0)
-            cellv.push_back(cel);
-        cout << "read4 " << cellv.size() << '\r' << flush;
-    }
-    for(int i=0;i!=48230;++i){
-        std::shared_ptr<cell> cel = make_shared<cell_ipi>();
-        cel->read(ifs5);
-        if(i>20000 and i%10==0)
-            cellv.push_back(cel);
-        cout << "read5 " << cellv.size() << '\r' << flush;
-    }
-    for(int i=0;i!=48230;++i){
-        std::shared_ptr<cell> cel = make_shared<cell_ipi>();
-        cel->read(ifs6);
-        if(i>20000 and i%10==0)
-            cellv.push_back(cel);
-        cout << "read6 " << cellv.size() << '\r' << flush;
-    }
-    for(int i=0;i!=48230;++i){
-        std::shared_ptr<cell> cel = make_shared<cell_ipi>();
-        cel->read(ifs7);
-        if(i>20000 and i%10==0)
-            cellv.push_back(cel);
-        cout << "read7 " << cellv.size() << '\r' << flush;
     }
     
     double cell_vol=0;

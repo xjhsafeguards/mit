@@ -30,71 +30,71 @@ int main(int argc,char** argv){
     //ifstream ifs1("/Users/jianhangxu/Documents/2Cl/cl_63H2O_npt_bo_300K/out.10.8129/cl.cel");
     //ifstream ifs2("/Users/jianhangxu/Documents/2Cl/cl_63H2O_npt_bo_300K/out.10.8129/cl.pos");
     
-    ifstream ifs0("/Users/jianhangxu/Documents/2Cl/Cl_63H2O_pimd/data.pos_0.xyz");
-    ifstream ifs1("/Users/jianhangxu/Documents/2Cl/Cl_63H2O_pimd/data.pos_0.xyz");
-    ifstream ifs2("/Users/jianhangxu/Documents/2Cl/Cl_63H2O_pimd/data.pos_0.xyz");
-    ifstream ifs3("/Users/jianhangxu/Documents/2Cl/Cl_63H2O_pimd/data.pos_0.xyz");
-    ifstream ifs4("/Users/jianhangxu/Documents/2Cl/Cl_63H2O_pimd/data.pos_0.xyz");
-    ifstream ifs5("/Users/jianhangxu/Documents/2Cl/Cl_63H2O_pimd/data.pos_0.xyz");
-    ifstream ifs6("/Users/jianhangxu/Documents/2Cl/Cl_63H2O_pimd/data.pos_0.xyz");
-    ifstream ifs7("/Users/jianhangxu/Documents/2Cl/Cl_63H2O_pimd/data.pos_0.xyz");
+    ifstream ifs0("/Users/jianhangxu/Documents/2Cl/cl_63H2O_npt_pi_300K/data.pos_0.xyz");
+    ifstream ifs1("/Users/jianhangxu/Documents/2Cl/cl_63H2O_npt_pi_300K/data.pos_0.xyz");
+    ifstream ifs2("/Users/jianhangxu/Documents/2Cl/cl_63H2O_npt_pi_300K/data.pos_0.xyz");
+    ifstream ifs3("/Users/jianhangxu/Documents/2Cl/cl_63H2O_npt_pi_300K/data.pos_0.xyz");
+    ifstream ifs4("/Users/jianhangxu/Documents/2Cl/cl_63H2O_npt_pi_300K/data.pos_0.xyz");
+    ifstream ifs5("/Users/jianhangxu/Documents/2Cl/cl_63H2O_npt_pi_300K/data.pos_0.xyz");
+    ifstream ifs6("/Users/jianhangxu/Documents/2Cl/cl_63H2O_npt_pi_300K/data.pos_0.xyz");
+    ifstream ifs7("/Users/jianhangxu/Documents/2Cl/cl_63H2O_npt_pi_300K/data.pos_0.xyz");
     
     vector<std::shared_ptr<cell>> cellv;
     
     molecule_manip* mol = new water_manip();
-    for(int i=0;i!=48230;++i){
+    for(int i=0;i!=13700;++i){
         std::shared_ptr<cell> cel = make_shared<cell_ipi>();
         cel->read(ifs0);
-        if(i>20000 and i%10==0)
+        if(i>8000)
             cellv.push_back(cel);
         cout << "read " << cellv.size() << '\r' << flush;
     }
-    for(int i=0;i!=48230;++i){
+    for(int i=0;i!=13700;++i){
         std::shared_ptr<cell> cel = make_shared<cell_ipi>();
         cel->read(ifs1);
-        if(i>20000 and i%10==0)
+        if(i>8000)
             cellv.push_back(cel);
         cout << "read1 " << cellv.size() << '\r' << flush;
     }
-    for(int i=0;i!=48230;++i){
+    for(int i=0;i!=13700;++i){
         std::shared_ptr<cell> cel = make_shared<cell_ipi>();
         cel->read(ifs2);
-        if(i>20000 and i%10==0)
+        if(i>8000)
             cellv.push_back(cel);
         cout << "read2 " << cellv.size() << '\r' << flush;
     }
-    for(int i=0;i!=48230;++i){
+    for(int i=0;i!=13700;++i){
         std::shared_ptr<cell> cel = make_shared<cell_ipi>();
         cel->read(ifs3);
-        if(i>20000 and i%10==0)
+        if(i>8000)
             cellv.push_back(cel);
         cout << "read3 " << cellv.size() << '\r' << flush;
     }
-    for(int i=0;i!=48230;++i){
+    for(int i=0;i!=13700;++i){
         std::shared_ptr<cell> cel = make_shared<cell_ipi>();
         cel->read(ifs4);
-        if(i>20000 and i%10==0)
+        if(i>8000)
             cellv.push_back(cel);
         cout << "read4 " << cellv.size() << '\r' << flush;
     }
-    for(int i=0;i!=48230;++i){
+    for(int i=0;i!=13700;++i){
         std::shared_ptr<cell> cel = make_shared<cell_ipi>();
         cel->read(ifs5);
-        if(i>20000 and i%10==0)
+        if(i>8000)
             cellv.push_back(cel);
         cout << "read5 " << cellv.size() << '\r' << flush;
     }
-    for(int i=0;i!=48230;++i){
+    for(int i=0;i!=13700;++i){
         std::shared_ptr<cell> cel = make_shared<cell_ipi>();
         cel->read(ifs6);
-        if(i>20000 and i%10==0)
+        if(i>8000)
             cellv.push_back(cel);
         cout << "read6 " << cellv.size() << '\r' << flush;
     }
-    for(int i=0;i!=48230;++i){
+    for(int i=0;i!=13700;++i){
         std::shared_ptr<cell> cel = make_shared<cell_ipi>();
         cel->read(ifs7);
-        if(i>20000 and i%10==0)
+        if(i>8000)
             cellv.push_back(cel);
         cout << "read7 " << cellv.size() << '\r' << flush;
     }

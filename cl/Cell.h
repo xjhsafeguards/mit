@@ -38,6 +38,9 @@ public:
         wans_ptrv.clear();
         mols_ptrv.clear();
     }
+    double volume() const{
+        return box_ptr->volume();
+    }
     
     //IO
     virtual std::istream& read(std::istream& is){std::cerr << "read not implement"; return is;}

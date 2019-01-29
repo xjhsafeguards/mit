@@ -55,6 +55,11 @@ public:
         celldm = celldm*in_unit;
     }
     
+    //read
+    double volume() const{
+        return celldm[0].cross(celldm[1])*celldm[2];
+    }
+    
 protected:
     data_type celldm;
     data_type inverse_celldm;
