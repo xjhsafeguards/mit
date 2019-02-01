@@ -31,13 +31,13 @@ int main(int argc,char** argv){
     //ifstream ifs2("/Users/jianhangxu/Documents/2Cl/cl_63H2O_npt_bo_300K/out.10.8129/cl.pos");
     
     ifstream ifs0("/Users/jianhangxu/Documents/2Cl/Cl_63H2O_pimd/data.pos_0.xyz");
-    ifstream ifs1("/Users/jianhangxu/Documents/2Cl/Cl_63H2O_pimd/data.pos_0.xyz");
-    ifstream ifs2("/Users/jianhangxu/Documents/2Cl/Cl_63H2O_pimd/data.pos_0.xyz");
-    ifstream ifs3("/Users/jianhangxu/Documents/2Cl/Cl_63H2O_pimd/data.pos_0.xyz");
-    ifstream ifs4("/Users/jianhangxu/Documents/2Cl/Cl_63H2O_pimd/data.pos_0.xyz");
-    ifstream ifs5("/Users/jianhangxu/Documents/2Cl/Cl_63H2O_pimd/data.pos_0.xyz");
-    ifstream ifs6("/Users/jianhangxu/Documents/2Cl/Cl_63H2O_pimd/data.pos_0.xyz");
-    ifstream ifs7("/Users/jianhangxu/Documents/2Cl/Cl_63H2O_pimd/data.pos_0.xyz");
+    ifstream ifs1("/Users/jianhangxu/Documents/2Cl/Cl_63H2O_pimd/data.pos_1.xyz");
+    ifstream ifs2("/Users/jianhangxu/Documents/2Cl/Cl_63H2O_pimd/data.pos_2.xyz");
+    ifstream ifs3("/Users/jianhangxu/Documents/2Cl/Cl_63H2O_pimd/data.pos_3.xyz");
+    ifstream ifs4("/Users/jianhangxu/Documents/2Cl/Cl_63H2O_pimd/data.pos_4.xyz");
+    ifstream ifs5("/Users/jianhangxu/Documents/2Cl/Cl_63H2O_pimd/data.pos_5.xyz");
+    ifstream ifs6("/Users/jianhangxu/Documents/2Cl/Cl_63H2O_pimd/data.pos_6.xyz");
+    ifstream ifs7("/Users/jianhangxu/Documents/2Cl/Cl_63H2O_pimd/data.pos_7.xyz");
     
     vector<std::shared_ptr<cell>> cellv;
     

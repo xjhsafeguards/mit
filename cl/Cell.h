@@ -41,12 +41,19 @@ public:
     double volume() const{
         return box_ptr->volume();
     }
+    int ss() const{
+        return snapshot;
+    }
     
     //IO
     virtual std::istream& read(std::istream& is){std::cerr << "read not implement"; return is;}
     virtual std::istream& read_box(std::istream& is){std::cerr << "read_box not implement"; return is;}
     virtual std::istream& read_atoms(std::istream& is){std::cerr << "read_atoms not implement"; return is;}
     virtual std::istream& read_wans(std::istream& is){std::cerr << "read_wans not implement"; return is;}
+    virtual std::istream& skip(std::istream& is){std::cerr << "read not implement"; return is;}
+    virtual std::istream& skip_box(std::istream& is){std::cerr << "read_box not implement"; return is;}
+    virtual std::istream& skip_atoms(std::istream& is){std::cerr << "read_atoms not implement"; return is;}
+    virtual std::istream& skip_wans(std::istream& is){std::cerr << "read_wans not implement"; return is;}
     virtual std::ostream& write(std::ostream& os){std::cerr << "write not implement"; return os;}
     virtual std::ostream& write_box(std::ostream& os){std::cerr << "write not implement"; return os;}
     virtual std::ostream& write_atoms(std::ostream& os){std::cerr << "write not implement"; return os;}

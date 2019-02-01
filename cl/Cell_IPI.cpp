@@ -7,7 +7,7 @@ std::istream& cell_ipi::read(std::istream& is){
     switch (cell_type) {
         case 0:{
             double a,b,c;
-            is >> tmps >> tmps >> a >> b >> c;
+            is >> tmps >> tmps >> a >> b >> c >> tmps >> tmps >> tmps >> tmps >> tmps >> tmps >> snapshot;
             is.ignore(1000,'\n');
             set_box(a,b,c);
             box_ptr->set_unit(l_bohr);
