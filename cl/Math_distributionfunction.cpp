@@ -33,6 +33,12 @@ std::vector<double> Distributionfunction::get_y() const{
 const std::vector<int>& Distributionfunction::get_ycount() const{
     return yresult;
 }
+int Distributionfunction::get_valid_count() const{
+    int total=0;
+    for(const auto& num: yresult)
+        total+=num;
+    return total;
+}
 void Distributionfunction::D1_y(std::vector<double>& result) const{
     for(auto it=yresult.cbegin(); it!=yresult.cend(); ++it){
         result.push_back((*it)*normalize/data_count/step_length);

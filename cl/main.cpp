@@ -26,9 +26,6 @@ int main(int argc,char** argv){
     
     double OCl_cutoff = 4;
     double HCl_cutoff = 3;
-    
-    ofstream ofs("Bead_SS_nO_OCl_PTC_angleOHCl_waterH.txt");
-    ofs << setprecision(15);
 
     if(argc != 1)
     {
@@ -44,36 +41,66 @@ int main(int argc,char** argv){
         }
     }
     
+    Distributionfunction* Dp[10];
+    for(int i=0;i!=10;++i){
+        Dp[i] = new Distributionfunction(0,180,500);
+    }
+    
     for(int fc=0; fc!=8;++fc){
     
         ifstream ifs("/Users/jianhangxu/Documents/2Cl/Cl_63H2O_pimd/data.pos_"+ to_string(fc) + ".xyz");
-        molecule_manip* water = new water_manip();
+        //molecule_manip* water = new water_manip();
         
         for(int i=0;i!=48230;++i){
             
             std::shared_ptr<cell> cel = make_shared<cell_ipi>();
             cel->read(ifs);
             if(i>10000){
-                water->read(*cel);
-                int j=0;
-                for(const auto& mol : cel->mols("H2O")){
-                    //assert(mol->atoms().size()==3);
-                    ++j;
-                    if(mol->atoms()[0]->distance(*(cel->atoms()[0])) < OCl_cutoff){
-                        double HCl1 = mol->atoms()[1]->distance(*(cel->atoms()[0]));
-                        double HCl2 = mol->atoms()[2]->distance(*(cel->atoms()[0]));
-                        if( HCl1 < HCl2 )
-                            ofs << setw(5) << fc << setw(15) << cel->ss() << setw(5) << j << setw(20) << mol->atoms()[0]->distance(*(cel->atoms()[0])) << setw(20) << mol->atoms()[1]->distance(*(mol->atoms()[0])) - HCl1 << setw(20) << mol->atoms()[1]->angle(*(mol->atoms()[0]),*(cel->atoms()[0])) << setw(10) << mol->atoms().size()-1 << endl;
-                        else
-                            ofs << setw(5) << fc << setw(15) << cel->ss() << setw(5) << j << setw(20) << mol->atoms()[0]->distance(*(cel->atoms()[0])) << setw(20) << mol->atoms()[2]->distance(*(mol->atoms()[0])) - HCl2 << setw(20) << mol->atoms()[2]->angle(*(mol->atoms()[0]),*(cel->atoms()[0])) << setw(10) << mol->atoms().size()-1 << endl;
-                        
+                //water->read(*cel);
+                //for(const auto& mol : cel->mols("H2O")){
+                //assert(mol->atoms().size()==3);
+                for( const auto& atom1: cel->atoms()){
+                    if(atom1->check_type("H") and atom1->distance(*cel->atoms()[0])<HCl_cutoff){
+                        vector<double> HClH;
+                        for( const auto& atom2: cel->atoms()){
+                            if(atom2->check_type("H") and atom2!=atom1 and atom2->distance(*cel->atoms()[0])<HCl_cutoff)
+                                HClH.push_back(cel->atoms()[0]->angle(*atom1,*atom2));
+                        }
+                        int nH(HClH.size());
+                        if(!(nH<10 and nH>0))
+                            cerr << "wrong nH" << nH << endl;
+                        Dp[nH]->read(HClH);
+                        Dp[0]->read(HClH);
                     }
                 }
             }
-            //     cellv.push_back(cel);
-            //cout << "read " << cellv.size() << '\r' << flush;
             cout << "read bead" << fc << " snapshot " << i << '\r' << flush;
         }
+    }
+    
+    ofstream ofs("adf_nH.txt");
+    ofs << setprecision(10);
+    ofs << "#" << setw(19) << "angle" << setw(20) << "total";
+    for(int i=2;i<11;++i){
+        ofs << setw(19) << "nH:" << i;
+    }
+    ofs << endl << "#" << setw(19) << "Num count:";
+    for(int i=0;i!=10;++i){
+        ofs << setw(20) << Dp[i]->get_valid_count();
+    }
+    ofs << endl;
+    
+    vector<double> X=Dp[0]->get_x();
+    vector<double> Y[10];
+    for(int i=0;i!=10;++i){
+        Y[i] = Dp[i]->get_y();
+    }
+    for(int i=0;i<X.size();++i){
+        ofs << setw(20) << X[i];
+        for(int j=0;j!=10;++j){
+            ofs << setw(20) << Y[j][i];
+        }
+        ofs << '\n';
     }
     
     /*

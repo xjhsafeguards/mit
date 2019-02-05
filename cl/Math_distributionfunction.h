@@ -49,6 +49,7 @@ public:
     std::vector<double> get_x() const;
     std::vector<double> get_y() const;
     const std::vector<int>& get_ycount() const;
+    int get_valid_count() const;
     
 private:
     void set_step_length(){

@@ -15,9 +15,12 @@ void water_manip::read_atoms(const std::vector<std::shared_ptr<position> >& atom
                 }
             }
             // if H2O has more than 2 H store H in distance order
-            if(tmp_ptr->atoms().size()>2){
+            if(tmp_ptr->atoms().size()>3){
                 auto atom_o = tmp_ptr->atoms()[0];
                 sort(tmp_ptr->atoms().begin()+1,tmp_ptr->atoms().end(),[&, atom_o](std::shared_ptr<position>&h1,std::shared_ptr<position>&h2){return atom_o->distance(*h1)<atom_o->distance(*h2);});
+                // H-O-H angle should be bigger than 80
+                //assert(atom_o->angle(*(tmp_ptr->atoms()[1]),*(tmp_ptr->atoms()[2]))>80);
+                //std::cout << tmp_ptr->atoms().size()-1 << "H molecules found: " << atom_o->angle(*(tmp_ptr->atoms()[1]),*(tmp_ptr->atoms()[2])) << '\n';
             }
             out_moleculev.push_back(tmp_ptr);
         }
