@@ -14,11 +14,11 @@ class Distributionfunction{
     double lower,upper;
     int steps;
     double step_length;
-    int data_count = 0;
+    long long data_count = 0;
     int dimension = 1;
     double normalize = 1;
     
-    std::vector<int> yresult;
+    std::vector<long long> yresult;
     
 public:
     Distributionfunction(double in_lower=0, double in_upper=1, int in_steps=100): lower(in_lower), upper(in_upper), steps(in_steps){
@@ -40,6 +40,7 @@ public:
     //read in data to calculate
     void read(const std::vector<double> & data_in);
     void read(typename std::vector<double>::const_iterator begin,typename std::vector<double>::const_iterator end);
+    void read(double data_point);
     
     //reset data
     inline void reset();
@@ -48,8 +49,8 @@ public:
     //get result
     std::vector<double> get_x() const;
     std::vector<double> get_y() const;
-    const std::vector<int>& get_ycount() const;
-    int get_valid_count() const;
+    const std::vector<long long>& get_ycount() const;
+    long long get_valid_count() const;
     
 private:
     void set_step_length(){

@@ -8,6 +8,9 @@ void Distributionfunction::read(typename std::vector<double>::const_iterator beg
         add_value(*begin);
     }
 }
+void Distributionfunction::read(double data_point){
+    add_value(data_point);
+}
 std::vector<double> Distributionfunction::get_x() const{
     std::vector<double> result;
     double tmp=lower+step_length/2;
@@ -30,11 +33,11 @@ std::vector<double> Distributionfunction::get_y() const{
     }
     return std::move(result);
 }
-const std::vector<int>& Distributionfunction::get_ycount() const{
+const std::vector<long long>& Distributionfunction::get_ycount() const{
     return yresult;
 }
-int Distributionfunction::get_valid_count() const{
-    int total=0;
+long long Distributionfunction::get_valid_count() const{
+    long long total=0;
     for(const auto& num: yresult)
         total+=num;
     return total;
