@@ -17,12 +17,12 @@ double frac_position::angle(const position& p1, const position& p2) const{
 // distance between this and p
 double cart_position::distance(const position& p) const{
     assert(same_box(p));
-    return pos.distance_BC(p.cart(),box->diagonal());
+    return pos.distance_BC(p.cart(),boxp->diagonal());
 }
 // angle between p1-this-p2 in radian
 double cart_position::angle(const position& p1, const position& p2) const{
     assert(same_box(p1));
     assert(same_box(p2));
-    return pos.angle_BC(p1.cart(),p2.cart(),box->diagonal());
+    return pos.angle_BC(p1.cart(),p2.cart(),boxp->diagonal());
 }
 

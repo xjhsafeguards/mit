@@ -75,7 +75,7 @@ public:
 
     //constructor
     position(){};
-    position(const data_type& in_p,const box_ptr& in_b,const std::string& in_type="", int in_label=-1): pos(in_p),box(in_b),type(in_type),label(in_label){}
+    position(const data_type& in_p,const box_ptr& in_b,const std::string& in_type="", int in_label=-1): pos(in_p),boxp(in_b),type(in_type),label(in_label){}
     position(const position&) = default;
     position(position&&) = default;
     position& operator=(const position&) = default;
@@ -113,20 +113,20 @@ protected:
     type_type type;
     label_type label;
     data_type pos;
-    box_ptr box;
+    box_ptr boxp;
     
     const data_type& data() const{
         return pos;
     }
     // compare if this and p in the the same box
     bool same_box(const position& p) const{
-        return p.box == box;
+        return p.boxp == boxp;
     }
     data_type cartesian(const data_type& p) const{
-        return p*box->data();
+        return p*boxp->data();
     }
     data_type fraction(const data_type& p) const{
-        return p*box->inverse();
+        return p*boxp->inverse();
     }
     
 };
@@ -188,7 +188,7 @@ protected:
 
 //set operations
 inline void position::set_box_ptr(const box_ptr& in_b){
-    box = in_b;
+    boxp = in_b;
 }
 inline void position::set_position(double x,double y,double z){
     pos = data_type(x,y,z);
