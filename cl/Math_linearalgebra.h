@@ -7,6 +7,7 @@
 #include <iomanip>
 #include <fstream>
 #include <cmath>
+#include <vector>
 
 #include "Math_const.h"
 

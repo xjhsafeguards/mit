@@ -3,6 +3,8 @@
 double water_parameter::OH_distance = 1.26;
 double water_parameter::OW_distance = 0.8;
 
+using std::sort;
+
 void water_manip::read_atoms(const std::vector<std::shared_ptr<position> >& atoms_ptrv,std::vector<std::shared_ptr<molecule> >& out_moleculev){
     assert(atoms_ptrv.size());
     for(const auto& aptr1 : atoms_ptrv){

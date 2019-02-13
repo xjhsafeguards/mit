@@ -1,7 +1,7 @@
 #ifndef Molecule_water_h
 #define Molecule_water_h
 
-
+#include <algorithm>
 #include <vector>
 
 #include "Molecule.h"
