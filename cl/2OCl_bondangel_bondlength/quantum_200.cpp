@@ -51,25 +51,40 @@ int main(int argc,char** argv){
     Stat_pool ba[200];
     Stat_pool bl[200];
     
-    ifstream ifs1("/Users/jianhangxu/Documents/2Cl/Cl_63H2O_PBE_vdW_cpmd/cl.cel");
-    ifstream ifs2("/Users/jianhangxu/Documents/2Cl/Cl_63H2O_PBE_vdW_cpmd/cl.pos");
-    
-    for(int i=0;i!=21220;++i){
+    for(int fc=0; fc!=8;++fc){
         
-        std::shared_ptr<cell> cel = make_shared<cell_qecp>(cell_qecp({1,63,126},{"Cl","O","H"}));
-        cel->read_box(ifs1);
-        cel->read_atoms(ifs2);
-        cout << "Read snapshot " << i << '\r' << flush;
-        if(i>5000){
-            water->read(*cel);
-            for(const auto& mol : cel->mols("H2O")){
-                //assert(mol->atoms().size()==3);
-                double OCl = mol->atoms()[0]->distance(*(cel->atoms()[0]));
-                int O_range = (OCl-2)/0.05;
-                if( O_range>-1 and O_range<200){
-                    ba[O_range].read(mol->atoms()[0]->angle(*mol->atoms()[1],*mol->atoms()[2]));
-                    bl[O_range].read((mol->atoms()[0]->distance(*mol->atoms()[1])+mol->atoms()[0]->distance(*mol->atoms()[1]))/2);                    }
+        ifstream ifs("/Users/jianhangxu/Documents/2Cl/Cl_63H2O_pimd/data.pos_"+ to_string(fc) + ".xyz");
+        
+        for(int i=0;i!=48230;++i){
+            
+            std::shared_ptr<cell> cel = make_shared<cell_ipi>();
+            cel->read(ifs);
+            if(i>10000){
+                water->read(*cel);
+                int j=0;
+                for(const auto& mol : cel->mols("H2O")){
+                    //assert(mol->atoms().size()==3);
+                    double OCl = mol->atoms()[0]->distance(*(cel->atoms()[0]));
+                    int O_range = (OCl-2)/0.05;
+                    if( O_range>-1 and O_range<200){
+                        ba[O_range].read(mol->atoms()[0]->angle(*mol->atoms()[1],*mol->atoms()[2]));
+                        bl[O_range].read((mol->atoms()[0]->distance(*mol->atoms()[1])+mol->atoms()[0]->distance(*mol->atoms()[1]))/2);                    }
+                    /*
+                    if ( OCl < OCl_cutoff[5]){
+                        double HCl1 = mol->atoms()[1]->distance(*(cel->atoms()[0]));
+                        double HCl2 = mol->atoms()[2]->distance(*(cel->atoms()[0]));
+                        double PTC = (HCl1 < HCl2) ? mol->atoms()[1]->distance(*(mol->atoms()[0])) - HCl1 : mol->atoms()[2]->distance(*(mol->atoms()[0])) - HCl2;
+                        for(int j=0;j!=6;++j){
+                            if(OCl < OCl_cutoff[j])
+                                Dp[j]->read(PTC);
+                        }
+                    }
+                     */
+                }
             }
+            //     cellv.push_back(cel);
+            //cout << "read " << cellv.size() << '\r' << flush;
+            cout << "read bead" << fc << " snapshot " << i << '\r' << flush;
         }
     }
     

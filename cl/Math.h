@@ -4,6 +4,7 @@
 #include "Math_const.h"
 #include "Math_linearalgebra.h"
 #include "Math_distributionfunction.h"
+#include "Math_statistics.h"
 
 #endif
 

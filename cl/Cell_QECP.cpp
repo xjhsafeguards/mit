@@ -9,10 +9,16 @@ std::istream& cell_qecp::read_box(std::istream& is){
 
 std::istream& cell_qecp::read_atoms(std::istream& is){
     assert(box_ptr);
-    double tmps,tmpt;
-    is >> tmps >> tmpt;
-    assert(snapshot==tmps);
-    assert(time==tmpt);
+    if(snapshot==-1){
+        is >> snapshot >> time;
+    }
+    else{
+        double tmps,tmpt;
+        is >> tmps >> tmpt;
+        assert(snapshot==tmps);
+        assert(time==tmpt);
+    }
+        
     for(int i=0;i<na.size();++i){
         for(int j=0; j!=na[i]; ++j){
             std::shared_ptr<position> tmp = std::make_shared<cart_position>();
