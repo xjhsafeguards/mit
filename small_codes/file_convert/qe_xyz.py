@@ -13,7 +13,7 @@ def main():
         with open(outputfile,'w') as outfile:
             for i in range(nss):
                 pos2xyz(infile,outfile)
-                for _ in range(ssstep)
+                    for _ in range(ssstep):
                     next(infile)
 
 def pos2xyz(ifs,ofs):
