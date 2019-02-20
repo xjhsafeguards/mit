@@ -11,10 +11,14 @@ outputfile='test.xyz'
 def main():
     with open(inputfile,'r') as infile:
         with open(outputfile,'w') as outfile:
+            totaln=0
+            for nl in natom:
+                totaln+=nl
             for i in range(nss):
                 pos2xyz(infile,outfile)
-                    for _ in range(ssstep):
-                    next(infile)
+                for _ in range(ssstep):
+                    for _ in range(totaln+1):
+                        next(infile)
 
 def pos2xyz(ifs,ofs):
     totaln=0
