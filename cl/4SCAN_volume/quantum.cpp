@@ -41,34 +41,41 @@ int main(int argc,char** argv){
         }
     }
     
-    vector<double> cellsize;
+    vector<double> cellsize[8];
     
-    int fc = 0;
     
-    ifstream ifs("/Users/jianhangxu/Documents/1PI_XAS/64qe_pi/data.pos_"+ to_string(fc) + ".xyz");
-    //molecule_manip* water = new water_manip();
+    for(int fc=0; fc!=8;++fc){
     
-    for(int i=0;i!=22400;++i){
+        ifstream ifs("/Users/jianhangxu/Documents/2Cl/cl_63H2O_npt_pi_300K/9.2ps/data.pos_"+ to_string(fc) + ".xyz");
+        //molecule_manip* water = new water_manip();
         
-        std::shared_ptr<cell> cel = make_shared<cell_ipi>();
-        cel->read(ifs);
-        
-        cellsize.push_back(cel->volume());
-        cout << "read bead" << fc << " snapshot " << i << '\r' << flush;
-    }
+        for(int i=0;i!=19300;++i){
+            
+            std::shared_ptr<cell> cel = make_shared<cell_ipi>();
+            cel->read(ifs);
 
+            cellsize[fc].push_back(cel->volume());
+            cout << "read bead" << fc << " snapshot " << i << '\r' << flush;
+        }
+    }
     
     ofstream ofs("SS_volume.txt");
     ofs << setprecision(10);
     
     ofs << "#" << setw(19) << "SS";
-    ofs << setw(20) << "volume";
+    for(int fc=0; fc!=8;++fc){
+        ofs << setw(20) << "Bead" + to_string(fc);
+    }
     ofs << endl ;
     
-    for(int i=0;i<cellsize.size();++i){
+    for(int i=0;i<cellsize[0].size();++i){
         ofs << setw(20) << i;
-        ofs << setw(20) << cellsize[i];
+        for(int j=0;j!=8;++j){
+            ofs << setw(20) << cellsize[j][i];
+        }
         ofs << '\n';
     }
+
+    
 
 }

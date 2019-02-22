@@ -24,7 +24,7 @@ void Print(const vector<T>& inv,ostream& os=cout){
 
 int main(int argc,char** argv){
     
-    double OCl_cutoff = 4;
+    double OCl_cutoff = 3.5;
     double HCl_cutoff = 3;
 
     if(argc != 1)
@@ -43,20 +43,19 @@ int main(int argc,char** argv){
     
     vector<double> cellsize;
     
-    int fc = 0;
-    
-    ifstream ifs("/Users/jianhangxu/Documents/1PI_XAS/64qe_pi/data.pos_"+ to_string(fc) + ".xyz");
+    ifstream ifs1("/Users/jianhangxu/Documents/2Cl/cl_63H2O_npt_bo_300K/out.13.7533/cl.cel");
+    ifstream ifs2("/Users/jianhangxu/Documents/2Cl/cl_63H2O_npt_bo_300K/out.13.7533/cl.pos");
     //molecule_manip* water = new water_manip();
     
-    for(int i=0;i!=22400;++i){
+    for(int i=0;i!=28400;++i){
         
-        std::shared_ptr<cell> cel = make_shared<cell_ipi>();
-        cel->read(ifs);
-        
+        std::shared_ptr<cell> cel = make_shared<cell_qecp>(cell_qecp({1,63,126},{"Cl","O","H"}));
+        cel->read_box(ifs1);
+        cel->read_atoms(ifs2);
         cellsize.push_back(cel->volume());
-        cout << "read bead" << fc << " snapshot " << i << '\r' << flush;
+        cout << "read snapshot " << i << '\r' << flush;
     }
-
+    
     
     ofstream ofs("SS_volume.txt");
     ofs << setprecision(10);
@@ -70,5 +69,7 @@ int main(int argc,char** argv){
         ofs << setw(20) << cellsize[i];
         ofs << '\n';
     }
+
+    
 
 }
