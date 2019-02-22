@@ -30,5 +30,5 @@ std::istream& cell_ipi::read(std::istream& is){
 }
 
 std::ostream& cell_ipi::write(std::ostream& os){
-    
+    return os;
 }

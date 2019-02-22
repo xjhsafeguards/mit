@@ -83,7 +83,7 @@ int main(int argc,char** argv){
                 for(const auto& mol : cel->mols("H2O")){
                     double OCl = mol->atoms()[0]->distance(*(cel->atoms()[0]));
                         ba.read(mol->atoms()[0]->angle(*mol->atoms()[1],*mol->atoms()[2]));
-                        bl.read((mol->atoms()[0]->distance(*mol->atoms()[1])+mol->atoms()[0]->distance(*mol->atoms()[1]))/2);
+                        bl.read((mol->atoms()[0]->distance(*mol->atoms()[1])+mol->atoms()[0]->distance(*mol->atoms()[2]))/2);
                 }
             }
         }

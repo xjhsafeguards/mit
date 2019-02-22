@@ -1,7 +1,9 @@
 #include "Molecule_water.h"
 
 double water_parameter::OH_distance = 1.26;
+double water_parameter::OH_distance_tol = 2;
 double water_parameter::OW_distance = 0.8;
+
 
 using std::sort;
 

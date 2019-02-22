@@ -68,7 +68,7 @@ int main(int argc,char** argv){
                     int O_range = (OCl-2)/0.2;
                     if( O_range>-1 and O_range<30){
                         ba[O_range].read(mol->atoms()[0]->angle(*mol->atoms()[1],*mol->atoms()[2]));
-                        bl[O_range].read((mol->atoms()[0]->distance(*mol->atoms()[1])+mol->atoms()[0]->distance(*mol->atoms()[1]))/2);                    }
+                        bl[O_range].read((mol->atoms()[0]->distance(*mol->atoms()[1])+mol->atoms()[0]->distance(*mol->atoms()[2]))/2);                    }
                     /*
                     if ( OCl < OCl_cutoff[5]){
                         double HCl1 = mol->atoms()[1]->distance(*(cel->atoms()[0]));

@@ -10,6 +10,7 @@
 
 namespace water_parameter {
     extern double OH_distance;
+    extern double OH_distance_tol;
     extern double OW_distance;
     }
 
