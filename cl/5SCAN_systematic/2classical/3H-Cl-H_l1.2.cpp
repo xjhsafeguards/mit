@@ -26,7 +26,7 @@ int main(int argc,char** argv){
     
     double OCl_cutoff = 3.82;
     double HCl_cutoff = 3;
-    double PTC_cutoff = -1;
+    double PTC_cutoff = -1.2;
     
     if(argc != 1)
     {
@@ -71,7 +71,7 @@ int main(int argc,char** argv){
                     double HCl1 = mol->atoms()[1]->distance(*(cel->atoms()[0]));
                     double HCl2 = mol->atoms()[2]->distance(*(cel->atoms()[0]));
                     double PTC = (HCl1 < HCl2) ? mol->atoms()[1]->distance(*(mol->atoms()[0])) - HCl1 : mol->atoms()[2]->distance(*(mol->atoms()[0])) - HCl2;
-                    if(PTC>PTC_cutoff){
+                    if(PTC<PTC_cutoff){
                         int Hlabel = (HCl1 < HCl2) ? 1 : 2;
                         for(const auto& mol2 : cel->mols("H2O")){
                             //assert(mol->atoms().size()==3);
@@ -80,8 +80,8 @@ int main(int argc,char** argv){
                                 if ( OCl < OCl_cutoff){
                                     double HCl1 = mol2->atoms()[1]->distance(*(cel->atoms()[0]));
                                     double HCl2 = mol2->atoms()[2]->distance(*(cel->atoms()[0]));
-                                    double PTC = (HCl1 < HCl2) ? mol2->atoms()[1]->distance(*(mol2->atoms()[0])) - HCl1 : mol2->atoms()[2]->distance(*(mol2->atoms()[0])) - HCl2;
-                                    if(PTC>PTC_cutoff){
+                                    //double PTC = (HCl1 < HCl2) ? mol2->atoms()[1]->distance(*(mol2->atoms()[0])) - HCl1 : mol2->atoms()[2]->distance(*(mol2->atoms()[0])) - HCl2;
+                                    if(PTC<PTC_cutoff){
                                         int Hlabel2 = (HCl1 < HCl2) ? 1 : 2;
                                         Dp->read(cel->atoms()[0]->angle(*(mol->atoms()[Hlabel]),*(mol2->atoms()[Hlabel2])));
                                     }
@@ -102,7 +102,7 @@ int main(int argc,char** argv){
         cout << "Read snapshot " << i << '\r' << flush;
     }
     
-    ofstream ofs("PTC>" + to_string(PTC_cutoff) + "H-Cl-H.txt");
+    ofstream ofs("PTC>>" + to_string(PTC_cutoff) + "H-Cl-H.txt");
     ofs << setprecision(10);
     ofs << "#" << setw(19) << "angle" << setw(20) << "distribution";
     ofs << endl << "#" << setw(19) << "Num count:";

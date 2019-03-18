@@ -80,11 +80,11 @@ int main(int argc,char** argv){
                                 if ( OCl < OCl_cutoff){
                                     double HCl1 = mol2->atoms()[1]->distance(*(cel->atoms()[0]));
                                     double HCl2 = mol2->atoms()[2]->distance(*(cel->atoms()[0]));
-                                    double PTC = (HCl1 < HCl2) ? mol2->atoms()[1]->distance(*(mol2->atoms()[0])) - HCl1 : mol2->atoms()[2]->distance(*(mol2->atoms()[0])) - HCl2;
-                                    if(PTC>PTC_cutoff){
+                                    //double PTC = (HCl1 < HCl2) ? mol2->atoms()[1]->distance(*(mol2->atoms()[0])) - HCl1 : mol2->atoms()[2]->distance(*(mol2->atoms()[0])) - HCl2;
+                                    //if(PTC>PTC_cutoff){
                                         int Hlabel2 = (HCl1 < HCl2) ? 1 : 2;
                                         Dp->read(cel->atoms()[0]->angle(*(mol->atoms()[Hlabel]),*(mol2->atoms()[Hlabel2])));
-                                    }
+                                    //}
                                 }
                             }
                         }
