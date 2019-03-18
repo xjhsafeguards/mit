@@ -1,5 +1,6 @@
 #include <iomanip>
 #include <chrono>
+#include <cstring>
 
 #include "Math.h"
 #include "Cell.h"

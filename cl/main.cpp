@@ -69,15 +69,15 @@ int main(int argc,char** argv){
     }
     
     
-    for(int fc=0; fc!=8;++fc){
+    ifstream ifs1(file_folder+"/cl.cel");
+    ifstream ifs2(file_folder+"/cl.pos");
+    //molecule_manip* water = new water_manip();
     
-        ifstream ifs( file_folder + "/data.pos_"+ to_string(fc) + ".xyz");
-        //molecule_manip* water = new water_manip();
+    for(int i=0;i!=f_end;++i){
         
-        for(int i=0;i!=f_end;++i){
-            
-            std::shared_ptr<cell> cel = make_shared<cell_ipi>();
-            cel->read(ifs);
+        std::shared_ptr<cell> cel = make_shared<cell_qecp>(cell_qecp({1,63,126},{"Cl","O","H"}));
+        cel->read_box(ifs1);
+        cel->read_atoms(ifs2);
             vector<vector<double>> data(6); // OH, OO, OCl, HCl, OClO, HClH,
             
             if(i>f_start){
@@ -113,9 +113,9 @@ int main(int argc,char** argv){
                 }
                 //cout << endl;
             }
-            cout << "read bead" << fc << " snapshot " << i << '\r' << flush;
+            cout << "read snapshot " << i << '\r' << flush;
         }
-    }
+    
     
     cell_vol /= scount;
     
