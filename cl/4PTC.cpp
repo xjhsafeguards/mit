@@ -1,5 +1,6 @@
 #include <iomanip>
 #include <chrono>
+#include <cstring>
 
 #include "Math.h"
 #include "Cell.h"
@@ -88,7 +89,7 @@ int main(int argc,char** argv){
         }
     }
     
-    ofstream ofs("PTC_Ocutoff.txt");
+    ofstream ofs("PTC.txt");
     ofs << setprecision(10);
     ofs << "#" << setw(19) << "PTC";
     ofs << setw(20) << "Ocutoff:" + to_string(OCl_cutoff);
