@@ -89,7 +89,7 @@ int main(int argc,char** argv){
         }
     }
     
-    ofstream ofs("PTC.txt");
+    ofstream ofs("PTC_q.txt");
     ofs << setprecision(10);
     ofs << "#" << setw(19) << "PTC";
     ofs << setw(20) << "Ocutoff:" + to_string(OCl_cutoff);
