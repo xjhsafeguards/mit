@@ -1,6 +1,5 @@
 #include <iomanip>
 #include <chrono>
-#include <cstring>
 
 #include "Math.h"
 #include "Cell.h"
@@ -27,10 +26,7 @@ int main(int argc,char** argv){
     
     double OCl_cutoff = 3.5;
     double HCl_cutoff = 3;
-    string file_folder = ".";
-    int f_start = 0;
-    int f_end = 10;
-    
+
     if(argc != 1)
     {
         for(int i=1; i<argc; ++i)
@@ -38,23 +34,12 @@ int main(int argc,char** argv){
             //if(strncmp(argv[i],"-n",2) == 0){string tmp=argv[++i];filename=tmp;}
             //else if(strncmp(argv[i],"-t",2) == 0){string tmp=argv[++i];snapshot_count=stoi(tmp);}
             if(strncmp(argv[i],"-w",2) == 0){string tmp=argv[++i];water_parameter::OH_distance=stod(tmp);}
-            else if(strncmp(argv[i],"-p",2) == 0){file_folder=argv[++i];}
-            else if(strncmp(argv[i],"-fs",3) == 0){string tmp=argv[++i];f_start=stoi(tmp);}
-            else if(strncmp(argv[i],"-fe",3) == 0){string tmp=argv[++i];f_end=stoi(tmp);}
-            else if(strncmp(argv[i],"-ocl",4) == 0){string tmp=argv[++i];OCl_cutoff=stod(tmp);}
-            else if(strncmp(argv[i],"-hcl",4) == 0){string tmp=argv[++i];HCl_cutoff=stod(tmp);}
-            else if(strncmp(argv[i],"-h",2) == 0){cout << "-w for set water searching parameter OH_distance\n-p for set folder of position files\n-fs for the fisrt snapshot to read\n-fe for the last snapshot to read" << endl; return 1;}
             //else if(strncmp(argv[i],"-angs",5) == 0){assert(!fastcal);unitconv=1.8897161646320723;}
             //else if(strncmp(argv[i],"-t",2) == 0){string tmp=argv[++i];time_step=stod(tmp);}
             //else if(strncmp(argv[i],"-f",2) == 0){fastcal=true;}
             else{cout << "Read in Unknow tag " << argv[i] << endl;}
         }
     }
-    
-    cout << "Reading folder: " + file_folder << endl;
-    cout << "Reading snapshot from: " + to_string(f_start) + " to: " + to_string(f_end) << endl;
-    cout << "OCl_cutoff :" + to_string(OCl_cutoff) << endl;
-    cout << "HCl_cutoff :" + to_string(HCl_cutoff) << endl;
     
     double cell_vol=0;
     int scount=0;
@@ -69,18 +54,18 @@ int main(int argc,char** argv){
     }
     
     
-    ifstream ifs1(file_folder+"/cl.cel");
-    ifstream ifs2(file_folder+"/cl.pos");
-    //molecule_manip* water = new water_manip();
+    for(int fc=0; fc!=8;++fc){
     
-    for(int i=0;i!=f_end;++i){
+        ifstream ifs("/Users/jianhangxu/Documents/2Cl/cl_63H2O_npt_pi_300K/pi_bp-2019-03-11/data.pos_"+ to_string(fc) + ".xyz");
+        //molecule_manip* water = new water_manip();
         
-        std::shared_ptr<cell> cel = make_shared<cell_qecp>(cell_qecp({1,63,126},{"Cl","O","H"}));
-        cel->read_box(ifs1);
-        cel->read_atoms(ifs2);
+        for(int i=0;i!=27100;++i){
+            
+            std::shared_ptr<cell> cel = make_shared<cell_ipi>();
+            cel->read(ifs);
             vector<vector<double>> data(6); // OH, OO, OCl, HCl, OClO, HClH,
             
-            if(i>f_start){
+            if(i>12000){
                 
                 for( const auto& atom1: cel->atoms()){
                     if(atom1->check_type("O"))
@@ -113,9 +98,9 @@ int main(int argc,char** argv){
                 }
                 //cout << endl;
             }
-            cout << "read snapshot " << i << '\r' << flush;
+            cout << "read bead" << fc << " snapshot " << i << '\r' << flush;
         }
-    
+    }
     
     cell_vol /= scount;
     
