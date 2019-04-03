@@ -42,7 +42,7 @@ int main(int argc,char** argv){
             else if(strncmp(argv[i],"-p",2) == 0){file_folder=argv[++i];}
             else if(strncmp(argv[i],"-fs",3) == 0){string tmp=argv[++i];f_start=stoi(tmp);}
             else if(strncmp(argv[i],"-fe",3) == 0){string tmp=argv[++i];f_end=stoi(tmp);}
-            else if(strncmp(argv[i],"-st",3) == 0){string tmp=argv[++i];f_end=stoi(tmp);}
+            else if(strncmp(argv[i],"-st",3) == 0){string tmp=argv[++i];f_step=stoi(tmp);}
             else if(strncmp(argv[i],"-oo",3) == 0){string tmp=argv[++i];OO_cutoff=stod(tmp);}
             //else if(strncmp(argv[i],"-hcl",4) == 0){string tmp=argv[++i];HCl_cutoff=stod(tmp);}
             else if(strncmp(argv[i],"-h",2) == 0){cout << "-w for set water searching parameter OH_distance\n-p for set folder of position files\n-fs for the fisrt snapshot to read\n-fe for the last snapshot to read\n-st for the steps in read file\n-oo for OO_cutoff in reading OOO angle" << endl; return 1;}
@@ -70,7 +70,8 @@ int main(int argc,char** argv){
         Dp[i] = new Distributionfunction(0,180,500);
     }
     
-    
+    //cout << "test1" << endl;   
+ 
     for(int fc=0; fc!=8;++fc){
     
         ifstream ifs( file_folder + "/data.pos_"+ to_string(fc) + ".xyz");
@@ -81,7 +82,7 @@ int main(int argc,char** argv){
             std::shared_ptr<cell> cel = make_shared<cell_ipi>();
             cel->read(ifs);
             vector<vector<double>> data(4); // OO, OH, HH, OOO,
-            
+            //cout << "test1" << endl; 
             if(i>f_start and (i-f_start)%f_step == 0){
                 
                 for( const auto& atom1: cel->atoms()){
@@ -90,10 +91,11 @@ int main(int argc,char** argv){
                             if(atom2->check_type("O")){
                                 data[0].push_back(atom1->distance(*atom2));
                                 if(atom1!=atom2 and atom1->distance(*atom2)<OO_cutoff){
-                                    for( const auto& atom3: cel->atoms()){
+                                    //time consuming 
+				    for( const auto& atom3: cel->atoms()){
                                         if(atom1!=atom3 and atom2!=atom3 and atom1->distance(*atom3)<OO_cutoff){
                                             data[3].push_back(atom1->angle(*atom2,*atom3));
-                                            
+                                   	    // cout << "test2" << endl;        
                                         }
                                     }
                                 }
@@ -104,14 +106,15 @@ int main(int argc,char** argv){
                     if(atom1->check_type("H")){
                         for( const auto& atom2: cel->atoms()){
                             if(atom2->check_type("H")){
-                                data[3].push_back(atom1->distance(*atom2));
+                                data[2].push_back(atom1->distance(*atom2));
                             }
                         }
                     }
                     cell_vol +=  cel->volume();
                     scount++;
-                    for(int i=0;i!=6;++i){
-                        //cout << data[i].size() << '\t';
+                    for(int i=0;i!=4;++i){
+                        //cout << data[i].size() << '\t';i
+                        //cout << "test3" << endl;
                         Dp[i]->read(data[i]);
                         //cout << Dp[i]->get_valid_count() << '\t';
                     }
