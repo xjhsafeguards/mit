@@ -1,5 +1,6 @@
 #include "Cell.h"
 #include "Cell_ipi.h"
+#include "Cell_qe.h"
 
 #include <iostream>
 #include <fstream>
@@ -8,24 +9,37 @@
 using namespace std;
 
 int main(int argc, char** argv){
-    Cell_ipi_c cel;
-    ifstream ifs1("/Users/jianhangxu/Study/1Cl/Cl_63H2O_pimd/data.pos_0.xyz");
-    //cel.skip(ifs1);
-    cel.read(ifs1);
+    //Cell_ipi_c cel;
+    //ifstream ifs1("/Users/jianhangxu/Study/1Cl/Cl_63H2O_pimd/data.pos_0.xyz");
+    
+    ifstream ifs1("/Users/jianhangxu/Study/1Cl/Cl_63H2O_PBE_vdW_cpmd/cl.cel");
+    ifstream ifs2("/Users/jianhangxu/Study/1Cl/Cl_63H2O_PBE_vdW_cpmd/cl.pos");
+    Cell_qecp_c cel({1,63,126},{"Cl","O","H"}),cel2({1,63,126},{"Cl","O","H"});
+    cel.read(ifs1,ifs2);
+    cel2 = cel;
+    cel.read(ifs1,ifs2);
     //cel.write_cell(cout) << endl;
     //cel.write_positions(cout) << endl;
+    cout << cel2.atom(1).distance(cel2.atom(2)) << endl;
+    cout << cel.atom(1).distance(cel.atom(2)) << endl;
+    cout << cel2.atom(1).distance(cel.atom(2)) << endl;
+    /*
     int i,j,k;
+    while(cin >> i){
+        cout << "num: " << i << " type: " << cel.atom(i).type() << " position: ";
+        cel.write_position(cout,i) << endl;
+    }
+
     while(cin >> i >> j >> k){
         cout << "position " << i << " : ";
-        cel.write_position(cout,i) << endl;
+        cel.write_position(cout,i) << " " << cel.atom(i).position() << endl;
         cout << "position " << j << " : ";
         cel.write_position(cout,j) << endl;
         cout << "position " << k << " : ";
         cel.write_position(cout,k) << endl;
-        cout << "distance between " << i << " " << j << " : "<< cel.distance(i,j) << endl;
-        cout << "angle between " << j << " " << i << " " << k <<  " : "<< cel.angle(i,j,k) << endl;
-    }
-    
+        cout << "distance between " << i << " " << j << " : "<< cel.distance(i,j) << " " << cel.atom(i).distance(cel.atom(j)) << endl;
+        cout << "angle between " << j << " " << i << " " << k <<  " : " << cel.angle(i,j,k) << " " << cel.atom(i).angle(cel.atom(j),cel.atom(k)) << endl;
+    }*/
     //cout << cel.angle(0,10,59) << endl;
 }
 

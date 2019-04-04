@@ -14,6 +14,7 @@ public:
     
     virtual double distance(int i,int j) const {return cal_distance_c(atom_position(i),atom_position(j),cell_parameters);}
     virtual double angle(int i,int j, int k) const {return cal_angle_c(atom_position(i),atom_position(j),atom_position(k),cell_parameters);}
+    virtual std::string type(int i) const {return types[i];}
     
 protected:
     void read_type1(std::istream&);

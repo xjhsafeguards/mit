@@ -4,6 +4,7 @@
 #include <Eigen/Dense>
 #include "Math_const.h"
 #include <cmath>
+#include <cassert>
 #include <iostream>
 #include <stdlib.h>
 #include <string>
@@ -25,6 +26,8 @@ public:
     
     Cell(){}
     
+    bool operator==(const Cell& cel) const {return this==&cel;}
+    
     virtual Atom atom(int index) const;
     virtual Box  box() const;
     
@@ -45,12 +48,14 @@ public:
     virtual std::ostream& write_positions(std::ostream& os) const { os << positions; return os;}
     virtual std::ostream& write_position(std::ostream& os, int i) const { os << atom_position(i); return os;}
     
+    virtual double volume() const;
+    virtual double snapshot() const {return c_snapshot;}
+    virtual double time() const {return c_time;}
+    virtual std::string type(int) const {std::cerr << "no type implemented! Quit!"; std::exit(0);}
     //distance between atom i and atom j;
     virtual double distance(int i,int j) const;
     //angle of atom j-i-k
     virtual double angle(int i,int j, int k) const;
-    virtual double volume() const;
-    virtual double snapshot() const {return c_snapshot;}
     
     //density of the system
     //virtual double density(){std::cerr << "no density implemented! Quit!"; std::exit(0);}
@@ -68,7 +73,7 @@ protected:
     int na; // num of total atoms
     std::vector<int> types_index; //type along the pos vector
     std::vector<std::string> types;
-    std::vector<std::string> type_list;
+    std::vector<std::string> type_list; //list of types
     std::vector<int> number_list;
     std::vector<double> mass_list;
     
@@ -136,9 +141,12 @@ public:
     
     Atom(const Cell& in_cel,int in_index):cel(in_cel),index(in_index){};
     
-    pos_type position() const;
+    //pos_type position() const;
     double distance(int j) const;
+    double distance(const Atom& a1) const;
     double angle(int j, int k) const;
+    double angle(const Atom& a1, const Atom& a2) const;
+    std::string type() const;
 };
 
 class Box{

@@ -34,7 +34,7 @@ void Cell_ipi_c::read_type1(std::istream& is){
         types.push_back(tmps);
         read_positions(i,a,b,c);
     }
-    //set_unit(l_bohr);
+    set_unit(l_bohr);
 }
 void Cell_ipi_c::skip_type1(std::istream& is) const{
     double line_count,ipi_unit=1;

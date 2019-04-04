@@ -1,15 +1,29 @@
 #include "Cell.h"
 
+/*
 Atom::pos_type Atom::position() const{
     return cel.atom_position(index);
 }
+ */
 
 double Atom::distance(int j) const{
     return cel.distance(index,j);
 }
-
+double Atom::distance(const Atom& a1) const{
+    assert(cel==a1.cel);
+    return cel.distance(index,a1.index);
+}
 double Atom::angle(int j, int k) const{
     return cel.angle(index,j,k);
+}
+double Atom::angle(const Atom& a1, const Atom& a2) const{
+    assert(cel==a1.cel);
+    assert(cel==a2.cel);
+    return cel.angle(index,a1.index,a2.index);
+}
+
+std::string Atom::type() const{
+    return cel.type(index);
 }
 
 /***************** Cell *******************/
