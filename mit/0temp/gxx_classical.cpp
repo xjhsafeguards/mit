@@ -6,7 +6,6 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <cstring>
 
 using namespace std;
 
@@ -45,42 +44,83 @@ int main(int argc, char** argv){
     double cell_vol=0;
     int scount=0;
     
-    auto Dp = new Distributionfunction(0.5,10.5,10);
-    
-    for(int fc=0; fc!=8;++fc){
-        
-        ifstream ifs( file_folder + "/data.pos_"+ to_string(fc) + ".xyz");
-        //molecule_manip* water = new water_manip();
-    
-        for(int i=0;i!=f_end;++i){
-            
-            Cell_ipi_c cel;
-            cel.read(ifs);
-            vector<vector<double>> data(6); // OH, OO, OCl, HCl, OClO, HClH,
-            
-            if(i>f_start){
-                int CNcount=0;
-                for(int i=1; i!=64; i++){
-                    if(cel.distance(0,i)<OCl_cutoff)
-                        ++CNcount;
-                }
-                Dp->read(CNcount);
-            }
-            cout << "read bead" << fc << " snapshot " << i << '\r' << flush;
-        }
+    //auto Dp = new Distributionfunction(0,6,500);
+    Distributionfunction* Dp[6];
+    for(int i=0;i!=4;++i){
+        Dp[i] = new Distributionfunction(0,6,500);
+    }
+    for(int i=4;i!=6;++i){
+        Dp[i] = new Distributionfunction(0,180,500);
     }
     
-    vector<double> X=Dp->get_x();
-    vector<double> Y=Dp->get_y();
     
-    ofstream ofs("CN.txt");
+    ifstream ifs1(file_folder+"/cl.cel");
+    ifstream ifs2(file_folder+"/cl.pos");
+    //molecule_manip* water = new water_manip();
+    
+    for(int i=0;i!=f_end;++i){
+        
+        Cell_qecp_c cel({1,63,126},{"Cl","O","H"});
+        cel.read(ifs1,ifs2);
+        vector<vector<double>> data(6); // OH, OO, OCl, HCl, OClO, HClH,
+        
+        if(i>f_start){
+            
+            for(int i=1; i!=64; i++){
+                for(int j=64; j!=190; j++)
+                    data[0].push_back(cel.distance(i,j));
+                data[2].push_back(cel.distance(i,0));
+                for(int j=1; j!=64; j++){
+                    data[1].push_back(cel.distance(i,j));
+                    if(i!=j and cel.distance(0,i)<OCl_cutoff and  cel.distance(0,j)<OCl_cutoff)
+                        data[4].push_back(cel.angle(0,i,j));
+                }
+            }
+            for(int i=64; i!=190; i++){
+                data[3].push_back(cel.distance(i,0));
+                for(int j=64; j!=190; j++){
+                    if(i!=j and cel.distance(0,i)<HCl_cutoff and  cel.distance(0,j)<HCl_cutoff)
+                        data[5].push_back(cel.angle(0,i,j));
+                }
+            }
+            cell_vol +=  cel.volume();
+            scount++;
+            for(int i=0;i!=6;++i){
+                //cout << data[i].size() << '\t';
+                Dp[i]->read(data[i]);
+                //cout << Dp[i]->get_valid_count() << '\t';
+            }
+            //cout << endl;
+        }
+        cout << "read snapshot " << i << '\r' << flush;
+    }
+    
+    
+    cell_vol /= scount;
+    
+    vector<double> X=Dp[0]->get_x();
+    vector<double> Y[6];
+    for(int i=0;i!=4;++i){
+        Dp[i]->set_dimension(3);
+        Dp[i]->set_normalize(cell_vol);
+        Y[i] = Dp[i]->get_y();
+    }
+    for(int i=4;i!=6;++i){
+        //Dp[i]->set_dimension(3);
+        //Dp[i]->set_normalize(cell_vol);
+        Y[i] = Dp[i]->get_y();
+    }
+    
+    ofstream ofs("G_OH_OO_OCl_HCl.txt");
     ofs << setprecision(10);
     
-    ofs << "#" << setw(19) << "CN" << setw(20) << "Prob" << endl ;
+    ofs << "#" << setw(19) << "R" << setw(20) << "OH" << setw(20) << "OO" << setw(20) << "OCl" << setw(20) << "HCl" << setw(20) << "OClO" << setw(20) << "HClH" << endl ;
     
     for(int i=0;i<X.size();++i){
         ofs << setw(20) << X[i];
-        ofs << setw(20) << Y[i];
+        for(int j=0;j!=6;++j){
+            ofs << setw(20) << Y[j][i];
+        }
         ofs << '\n';
     }
 }

@@ -11,6 +11,7 @@
 #include <vector>
 
 class Atom;
+class Atom_group;
 class Cell;
 class Box;
 
@@ -131,10 +132,9 @@ protected:
 
 
 class Atom{
-    
+    friend class Atom_group;
     const Cell& cel;
     int index;
-    
 public:
     
     typedef typename Cell::pos_type pos_type;
@@ -149,10 +149,17 @@ public:
     std::string type() const;
 };
 
-class Box{
-    
+class Atom_group{
     const Cell& cel;
+    std::vector<int> indexs;
+public:
+    Atom_group(const Cell& in_cel,std::vector<int> in_indexs=std::vector<int>()):cel(in_cel),indexs(in_indexs){}
     
+    void add(const Atom& a){ indexs.push_back(a.index);}
+};
+
+class Box{
+    const Cell& cel;
 public:
     
     Box(const Cell& in_cel):cel(in_cel){};
