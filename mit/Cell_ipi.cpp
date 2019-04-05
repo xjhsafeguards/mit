@@ -22,6 +22,7 @@ void Cell_ipi_c::skip(std::istream& is) const {
 }
 
 void Cell_ipi_c::read_type1(std::istream& is){
+    assert(is.good());
     std::string tmps;
     double a,b,c;
     is >> na;
@@ -37,6 +38,7 @@ void Cell_ipi_c::read_type1(std::istream& is){
     set_unit(l_bohr);
 }
 void Cell_ipi_c::skip_type1(std::istream& is) const{
+    assert(is.good());
     double line_count,ipi_unit=1;
     is >> line_count;
     for(int i=0; i!=line_count+2; ++i)

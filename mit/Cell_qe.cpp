@@ -1,6 +1,7 @@
 #include "Cell_qe.h"
 
 void Cell_qecp_c::read_cell(std::istream& is){
+    assert(is.good());
     is >> c_snapshot >> c_time;
     double a,b,c,tmp;
     is >> a >> tmp >> tmp >> tmp >> b >> tmp >> tmp >> tmp  >> c;
@@ -8,10 +9,12 @@ void Cell_qecp_c::read_cell(std::istream& is){
     set_box_unit(l_bohr);
 }
 void Cell_qecp_c::skip_cell(std::istream& is) const{
+    assert(is.good());
     for(int i=0;i!=4;++i)
         is.ignore(1000,'\n');
 }
 void Cell_qecp_c::read_pos(std::istream& is){
+    assert(is.good());
     is >> c_snapshot >> c_time;
     double a,b,c;
     init_positions(na);
@@ -22,6 +25,7 @@ void Cell_qecp_c::read_pos(std::istream& is){
     set_positions_unit(l_bohr);
 }
 void Cell_qecp_c::skip_pos(std::istream& is) const{
+    assert(is.good());
     for(int i=0;i!=na+1;++i)
         is.ignore(1000,'\n');
 }

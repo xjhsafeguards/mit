@@ -57,7 +57,7 @@ int main(int argc, char** argv){
     }
     
     
-    for(int fc=0; fc!=8;++fc){
+    for(int fc=0; fc!=1;++fc){
         
         ifstream ifs( file_folder + "/data.pos_"+ to_string(fc) + ".xyz");
         //molecule_manip* water = new water_manip();
@@ -75,9 +75,11 @@ int main(int argc, char** argv){
                         data[1].push_back(cel.distance(i,j));
                     for(int j=0; j!=128; j++){
                         data[0].push_back(cel.distance(i,j));
+                        /*
                         for(int k=0; k!=128; k++)
                             if(i!=j and i!=k and k!=j and cel.distance(i,j)<OO_cutoff and  cel.distance(i,k)<OO_cutoff)
                             data[3].push_back(cel.angle(i,j,k));
+                         */
                     }
                 }
                 for(int i=128; i!=384; i++){
@@ -85,6 +87,8 @@ int main(int argc, char** argv){
                         data[2].push_back(cel.distance(i,j));
                     }
                 }
+                //cout << "CEll" << endl;
+                //cout << cel.volume() << endl;
                 cell_vol +=  cel.volume();
                 scount++;
                 for(int i=0;i!=4;++i){
