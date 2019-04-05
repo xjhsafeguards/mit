@@ -82,8 +82,9 @@ protected:
     //int atom_index(std::string name, int index){}
     
     //get position
-    pos_type atom_position(int i) const {return positions.row(i);}
-
+    //pos_type atom_position(int i) const {return positions.row(i);}
+    pos_type atom_position(int i) const {return std::move(positions.row(i));}
+    
 //read
     // init positions for read
     void init_positions(int i) {positions.resize(i,3);}
@@ -99,33 +100,33 @@ protected:
     void to_frac();
     void to_cart();
     // basic functions to modify positions
-    pos_type cal_frac(const pos_type& cp,const box_type& bc) const {return cp*bc.inverse();}
-    pos_type cal_cart(const pos_type& fp,const  box_type& bc) const {return fp*bc;}
+    pos_type cal_frac(const pos_type& cp,const box_type& bc) const {return std::move(cp*bc.inverse());}
+    pos_type cal_cart(const pos_type& fp,const  box_type& bc) const {return std::move(fp*bc);}
     
     
     // basic functions to calculate relationship between positions
     double cal_distance_f(const pos_type& fp1,const pos_type& fp2,const box_type& bc) const
     {
-        return cal_cart(shortest_fvector(fp1,fp2),bc).norm();
+        return std::move(cal_cart(shortest_fvector(fp1,fp2),bc).norm());
     }
     double cal_angle_f(const pos_type& fp1,const pos_type& fp2,const pos_type& fp3,const box_type& bc) const
     {
-        pos_type v1=cal_cart(shortest_fvector(fp2,fp1),bc);
-        pos_type v2=cal_cart(shortest_fvector(fp3,fp1),bc);
-        return acos(v1.dot(v2)/v1.norm()/v2.norm())*180/PI;
+        pos_type v1=std::move(cal_cart(shortest_fvector(fp2,fp1),bc));
+        pos_type v2=std::move(cal_cart(shortest_fvector(fp3,fp1),bc));
+        return std::move(acos(v1.dot(v2)/v1.norm()/v2.norm())*180/PI);
     }
     pos_type shortest_fvector(const pos_type& fp1,const pos_type& fp2) const;
     
     // basic fucntions to calculate relationship between positions for cartesian only used if box is diagonal
     double cal_distance_c(const pos_type& cp1,const pos_type& cp2,const box_type& bc) const
     {
-        return shortest_vector(cp1,cp2,bc).norm();
+        return std::move(shortest_vector(cp1,cp2,bc).norm());
     }
     double cal_angle_c(const pos_type& cp1,const pos_type& cp2,const pos_type& cp3,const box_type& bc) const
     {
-        pos_type v1=shortest_vector(cp2,cp1,bc);
-        pos_type v2=shortest_vector(cp3,cp1,bc);
-        return acos(v1.dot(v2)/v1.norm()/v2.norm())*180/PI;
+        pos_type v1=std::move(shortest_vector(cp2,cp1,bc));
+        pos_type v2=std::move(shortest_vector(cp3,cp1,bc));
+        return std::move(acos(v1.dot(v2)/v1.norm()/v2.norm())*180/PI);
     }
     pos_type shortest_vector(const pos_type& cp1,const pos_type& cp2,const box_type& bc) const;
 };
