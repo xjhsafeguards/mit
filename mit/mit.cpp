@@ -1,6 +1,8 @@
 #include "Cell.h"
 #include "Cell_ipi.h"
 #include "Cell_qe.h"
+#include "Molecule.h"
+#include "Molecule_water.h"
 #include "../cl/Math.h"
 
 #include <iostream>
@@ -71,8 +73,13 @@ int main(int argc, char** argv){
             if(i>f_start and (i-f_start)%f_step == 0){
                 
                 cel.read(ifs);
-                for(const auto& a : cel.atoms(127,129)){
-                    cout << a.type() << endl;
+                Water_group water(cel);
+                water.read();
+                for(const auto& pw : water){
+                    for(const auto& pa: *pw){
+                        cout << pa->get_index() << " ";
+                    }
+                    cout << endl;
                 }
                 cout << "read bead" << fc << " snapshot " << i << '\r' << flush;
             }else{

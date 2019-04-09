@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <string>
 #include <vector>
+#include <memory> // shared_ptr make_shared
 
 class Atom;
 class Atom_group;
@@ -143,7 +144,7 @@ public:
 };
 
 class Atom{
-    friend class Atom_group;
+    //friend class Atom_group;
     const Cell& cel;
     int index;
 public:
@@ -160,19 +161,53 @@ public:
     double angle(int j, int k) const;
     double angle(const Atom& a1, const Atom& a2) const;
     std::string type() const;
+    int get_index() const {return index;}
 };
 
 class Atom_group{
+public:
+    typedef std::shared_ptr<Atom> atom_type;
+    typedef std::vector<std::shared_ptr<Atom> > data_type;
+protected:
+    const Cell& cel;
+    data_type atoms;
+public:
+    Atom_group(const Cell& in_cel,std::vector<int> in_indexs=std::vector<int>()):cel(in_cel){
+        for( const auto& index: in_indexs){
+            atoms.push_back(new_atom(index));
+        }
+    }
+    Atom_group(const Atom_group&) = default;
+    Atom_group(Atom_group&&) = default;
+    
+    void add(const Atom& a){  atoms.push_back(new_atom(a));}
+    void add(Atom&& a){  atoms.push_back(new_atom(a));}
+    data_type::iterator begin() {return atoms.begin();}
+    data_type::iterator end() {return atoms.end();}
+    
+    int size() {return atoms.size();}
+protected:
+    atom_type new_atom(int index) {return std::move(std::make_shared<Atom>(cel,index));}
+    atom_type new_atom(const Atom& a) {return std::move(std::make_shared<Atom>(a));}
+    atom_type new_atom(Atom&& a) {return std::move(std::make_shared<Atom>(a));}
+};
+/*
+class Atom_group{
     //friend class Atom_iterator;
+protected:
     const Cell& cel;
     std::vector<int> indexs;
 public:
     Atom_group(const Cell& in_cel,std::vector<int> in_indexs=std::vector<int>()):cel(in_cel),indexs(in_indexs){}
+    Atom_group(const Atom_group&) = default;
+    Atom_group(Atom_group&&) = default;
     
     class Atom_iterator{
         const Atom_group& AG;
         std::vector<int>::iterator it;
     public:
+        typedef Atom value_type;
+        
         Atom_iterator(const Atom_group& in_ag,std::vector<int>::iterator in_it): AG(in_ag),it(in_it){}
         Atom operator*() {return {AG.cel,*it};}
         Atom_iterator operator++() {++it;return *this;}
@@ -180,10 +215,13 @@ public:
     };
     
     void add(const Atom& a){ indexs.push_back(a.index);}
+    void add(Atom&& a){ indexs.push_back(a.index);}
     Atom_iterator begin() {return {*this,indexs.begin()};}
     Atom_iterator end() {return {*this,indexs.end()};}
     
-};
+    int size() {return indexs.size();}
+    
+};*/
 
 class Box{
     const Cell& cel;
