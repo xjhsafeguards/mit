@@ -13,6 +13,7 @@
 class Atom;
 class Atom_group;
 class Cell;
+class Cell_manip;
 class Box;
 
 
@@ -30,6 +31,9 @@ public:
     bool operator==(const Cell& cel) const {return this==&cel;}
     
     virtual Atom atom(int index) const;
+    virtual Atom_group atoms() const;
+    virtual Atom_group atoms(std::string in_type) const;
+    virtual Atom_group atoms(int start_index,int end_index) const;
     virtual Box  box() const;
     
     // Reading in Cells
@@ -131,6 +135,12 @@ protected:
     pos_type shortest_vector(const pos_type& cp1,const pos_type& cp2,const box_type& bc) const;
 };
 
+class Cell_manip{
+    const Cell& cel;
+public:
+    //Cell_manip():cel(*(new Cell())){}
+    Cell_manip(const Cell& in_cel):cel(in_cel){}
+};
 
 class Atom{
     friend class Atom_group;
@@ -141,6 +151,8 @@ public:
     typedef typename Cell::pos_type pos_type;
     
     Atom(const Cell& in_cel,int in_index):cel(in_cel),index(in_index){};
+    Atom(const Atom&) = default;
+    Atom(Atom&&) = default;
     
     //pos_type position() const;
     double distance(int j) const;
@@ -151,12 +163,26 @@ public:
 };
 
 class Atom_group{
+    //friend class Atom_iterator;
     const Cell& cel;
     std::vector<int> indexs;
 public:
     Atom_group(const Cell& in_cel,std::vector<int> in_indexs=std::vector<int>()):cel(in_cel),indexs(in_indexs){}
     
+    class Atom_iterator{
+        const Atom_group& AG;
+        std::vector<int>::iterator it;
+    public:
+        Atom_iterator(const Atom_group& in_ag,std::vector<int>::iterator in_it): AG(in_ag),it(in_it){}
+        Atom operator*() {return {AG.cel,*it};}
+        Atom_iterator operator++() {++it;return *this;}
+        bool operator!=(const Atom_iterator& in_AI) {return it!=in_AI.it;}
+    };
+    
     void add(const Atom& a){ indexs.push_back(a.index);}
+    Atom_iterator begin() {return {*this,indexs.begin()};}
+    Atom_iterator end() {return {*this,indexs.end()};}
+    
 };
 
 class Box{

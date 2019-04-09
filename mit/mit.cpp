@@ -48,6 +48,7 @@ int main(int argc, char** argv){
     int scount=0;
     
     //auto Dp = new Distributionfunction(0,6,500);
+    /*
     Distributionfunction* Dp[4];
     for(int i=0;i!=3;++i){
         Dp[i] = new Distributionfunction(0,6,500);
@@ -55,7 +56,7 @@ int main(int argc, char** argv){
     for(int i=3;i!=4;++i){
         Dp[i] = new Distributionfunction(0,180,500);
     }
-    
+    */
     
     for(int fc=0; fc!=1;++fc){
         
@@ -65,34 +66,13 @@ int main(int argc, char** argv){
         for(int i=0;i!=f_end;++i){
             
             Cell_ipi_c cel;
-            vector<vector<double>> data(4); // OO, OH, HH, OOO
+            //vector<vector<double>> data(4); // OO, OH, HH, OOO
             
             if(i>f_start and (i-f_start)%f_step == 0){
                 
                 cel.read(ifs);
-                for(int i=0; i!=128; i++){
-                    for(int j=128; j!=384; j++)
-                        data[1].push_back(cel.distance(i,j));
-                    for(int j=0; j!=128; j++){
-                        data[0].push_back(cel.distance(i,j));
-                        /*
-                        for(int k=0; k!=128; k++)
-                            if(i!=j and i!=k and k!=j and cel.distance(i,j)<OO_cutoff and  cel.distance(i,k)<OO_cutoff)
-                            data[3].push_back(cel.angle(i,j,k));
-                         */
-                    }
-                }
-                for(int i=128; i!=384; i++){
-                    for(int j=128; j!=384; j++){
-                        data[2].push_back(cel.distance(i,j));
-                    }
-                }
-                //cout << "CEll" << endl;
-                //cout << cel.volume() << endl;
-                cell_vol +=  cel.volume();
-                scount++;
-                for(int i=0;i!=4;++i){
-                    Dp[i]->read(data[i]);
+                for(const auto& a : cel.atoms(127,129)){
+                    cout << a.type() << endl;
                 }
                 cout << "read bead" << fc << " snapshot " << i << '\r' << flush;
             }else{
@@ -102,7 +82,7 @@ int main(int argc, char** argv){
         }
     }
     
-    
+    /*
     cell_vol /= scount;
     
     vector<double> X=Dp[0]->get_x();
@@ -130,6 +110,7 @@ int main(int argc, char** argv){
         }
         ofs << '\n';
     }
+     */
 }
 
 /*

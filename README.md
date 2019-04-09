@@ -5,6 +5,9 @@ Molecule Investigation Toolkit
 ## Developer ##
 * Jianhang Xu: [jianhang.xu@temple.edu](mailto:jianhang.xu@temple.edu)
 
+## Class set up for mit ##
+[Readme for mit folder](doc/mit.md)
+
 ## Small code usage
 
 ### File convert

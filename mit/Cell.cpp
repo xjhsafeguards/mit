@@ -29,6 +29,25 @@ std::string Atom::type() const{
 /***************** Cell *******************/
 
 Atom Cell::atom(int index) const {return Atom(*this,index);}
+Atom_group Cell::atoms() const {
+    std::vector<int> tmp_index;
+    for(int i=0;i!=positions.rows();++i)
+        tmp_index.push_back(i);
+    return {*this,std::move(tmp_index)};
+}
+Atom_group Cell::atoms(std::string in_type) const{
+    std::vector<int> tmp_index;
+    for(int i=0;i!=positions.rows();++i)
+        if(type(i)==in_type)
+            tmp_index.push_back(i);
+    return {*this,std::move(tmp_index)};
+}
+Atom_group Cell::atoms(int start_index,int end_index) const{
+    std::vector<int> tmp_index;
+    for(int i=start_index;i<end_index;++i)
+            tmp_index.push_back(i);
+    return {*this,std::move(tmp_index)};
+}
 Box  Cell::box() const {return Box(*this);}
 
 double Cell::distance(int i,int j) const{
