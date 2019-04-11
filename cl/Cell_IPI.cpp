@@ -29,6 +29,6 @@ std::istream& cell_ipi::read(std::istream& is){
     return is;
 }
 
-std::ostream& cell_ipi::write(std::ostream& os){
-    return os;
-}
+//std::ostream& cell_ipi::write(std::ostream& os){
+//    return os;
+//}

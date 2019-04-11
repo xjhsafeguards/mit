@@ -60,6 +60,15 @@ public:
         return celldm[0].cross(celldm[1])*celldm[2];
     }
     
+    std::ostream& write(std::ostream& os){
+        os << celldm;
+        return os;
+    }
+    std::ostream& write_inverse(std::ostream& os){
+        os << inverse_celldm;
+        return os;
+    }
+    
 protected:
     data_type celldm;
     data_type inverse_celldm;
@@ -108,6 +117,18 @@ public:
     virtual double angle(const position& p1, const position& p2) const = 0;
     
     // stream operations
+    virtual std::ostream& write(std::ostream& os){
+        os << pos;
+        return os;
+    }
+    virtual std::ostream& write_frac(std::ostream& os){
+        os << frac();
+        return os;
+    }
+    virtual std::ostream& write_cart(std::ostream& os){
+        os << cart();
+        return os;
+    }
     
 protected:
     type_type type;

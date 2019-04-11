@@ -55,8 +55,22 @@ public:
     virtual std::istream& skip_atoms(std::istream& is){std::cerr << "read_atoms not implement"; return is;}
     virtual std::istream& skip_wans(std::istream& is){std::cerr << "read_wans not implement"; return is;}
     virtual std::ostream& write(std::ostream& os){std::cerr << "write not implement"; return os;}
-    virtual std::ostream& write_box(std::ostream& os){std::cerr << "write not implement"; return os;}
-    virtual std::ostream& write_atoms(std::ostream& os){std::cerr << "write not implement"; return os;}
+    virtual std::ostream& write_box(std::ostream& os){box_ptr->write(os); return os;}
+    virtual std::ostream& write_atoms(std::ostream& os){
+        for(const auto& ap : atoms_ptrv){
+            ap->write(os) << std::endl;
+        }
+        return os;}
+    virtual std::ostream& write_atoms_frac(std::ostream& os){
+        for(const auto& ap : atoms_ptrv){
+            ap->write_frac(os) << std::endl;
+        }
+        return os;}
+    virtual std::ostream& write_atoms_cart(std::ostream& os){
+        for(const auto& ap : atoms_ptrv){
+            ap->write_cart(os) << std::endl;
+        }
+        return os;}
     virtual std::ostream& write_wans(std::ostream& os){std::cerr << "write not implement"; return os;}
 };
 

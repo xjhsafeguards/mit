@@ -12,7 +12,7 @@ public:
     cell_ipi(int in_type=0): cell_type(in_type){}
 
     virtual std::istream& read(std::istream&);
-    virtual std::ostream& write(std::ostream&);
+    //virtual std::ostream& write(std::ostream&);
 };
 
 #endif
