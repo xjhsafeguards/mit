@@ -223,6 +223,9 @@ inline void Distributionfunction2D::set_normalize1(double in_norm){
 inline void Distributionfunction2D::set_normalize2(double in_norm){
     normalize2 = in_norm;
 }
+inline void Distributionfunction2D::read(double data1,double data2){
+    add_value(data1,data2);
+}
 inline void Distributionfunction2D::reset(){
     reset_yresult();
 }

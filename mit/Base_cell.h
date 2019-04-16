@@ -6,6 +6,8 @@
 #include <cassert> // assert
 #include "Math_const.h" // PI
 #include <cmath> // acos abs
+#include <vector> // std::vector
+#include <memory> // std::shared_ptr, std::make_shared()
 
 namespace Cell {
     
@@ -50,6 +52,7 @@ namespace Cell {
         inline std::istream& read(std::istream&);
         inline std::istream& read(int,std::istream&);
         inline std::ostream& write(std::ostream&) const;
+        //Operations
     };
     
     class Position : public Eigen::Matrix<double,1,3,Eigen::RowMajor>{
@@ -62,6 +65,12 @@ namespace Cell {
         inline void read(double,double,double);
         inline std::istream& read(std::istream&);
         inline std::ostream& write(std::ostream&) const;
+    };
+    
+    template <typename T>
+    class Pointer_vector : public
+    
+    class Position_pv : public std::vector<std::shared_ptr<Position>>{
         
     };
     
