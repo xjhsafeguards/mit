@@ -10,10 +10,10 @@
 namespace Cell {
     
     typedef Eigen::Matrix<double,1,3,Eigen::RowMajor> Vector;
-    typedef Eigen::Matrix<double,1,3,Eigen::RowMajor> Position;
     
     class Box;
     class Positions;
+    class Position;
     class Cell;
     
     class Box : public Eigen::Matrix3d{
@@ -42,7 +42,7 @@ namespace Cell {
         typedef Eigen::Matrix<double,Eigen::Dynamic,3,Eigen::RowMajor> data_type;
         typedef Eigen::Matrix<double,Eigen::Dynamic,3,Eigen::RowMajor> super;
     public:
-        //constructros
+        //constructors
         using super::super;
         //IO
         inline void init(int line);
@@ -52,8 +52,23 @@ namespace Cell {
         inline std::ostream& write(std::ostream&) const;
     };
     
-    class Cell :
+    class Position : public Eigen::Matrix<double,1,3,Eigen::RowMajor>{
+        typedef Eigen::Matrix<double,1,3,Eigen::RowMajor> data_type;
+        typedef Eigen::Matrix<double,1,3,Eigen::RowMajor> super;
+    public:
+        //constructors
+        using super::super;
+        //IO
+        inline void read(double,double,double);
+        inline std::istream& read(std::istream&);
+        inline std::ostream& write(std::ostream&) const;
+        
+    };
     
+    
+    class Cell{
+        
+    };
     
     /* Box Functions */
     inline std::istream& Box::read(std::istream& is){

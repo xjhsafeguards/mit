@@ -34,8 +34,13 @@ int main(){
     cout << p1 << endl;
     p1.read(1,2,3,4);
     p1.write(cout)<< endl;
-    cout << "put your first line of pi: ";
-    p1.read(0,cin);
-    p1.write(cout) << endl;
-    cout << p1(1) << endl;
+    //cout << "put your first line of pi: ";
+    //p1.read(0,cin);
+    //p1.write(cout) << endl;
+    //cout << p1(1) << endl;
+    
+    const Vector& r1= p1.row(0),& r2=p1.row(1);
+    //r1 << 0,1,2;
+    cout << r1 << endl << r2 << endl;
+    cout << p1 << endl;
 }
