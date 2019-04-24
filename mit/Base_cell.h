@@ -17,6 +17,9 @@ namespace Cell {
     class Positions;
     class Position;
     class Cell;
+    template <typename T> class Pointer_vector;
+    using Position_pv = Pointer_vector<Position>;
+    
     
     class Box : public Eigen::Matrix3d{
         typedef Eigen::Matrix3d data_type;
@@ -61,6 +64,7 @@ namespace Cell {
     public:
         //constructors
         using super::super;
+        Position(std::istream& is){read(is);}
         //IO
         inline void read(double,double,double);
         inline std::istream& read(std::istream&);
@@ -68,10 +72,27 @@ namespace Cell {
     };
     
     template <typename T>
-    class Pointer_vector : public
+    class Pointer_vector : public std::vector<std::shared_ptr<T>>{
+        typedef std::vector<std::shared_ptr<T>> data_type;
+        typedef std::vector<std::shared_ptr<T>> super;
+    public:
+        //constructors
+        using super::super;
+    };
     
-    class Position_pv : public std::vector<std::shared_ptr<Position>>{
-        
+    template <>
+    class Pointer_vector<Position> : public std::vector<std::shared_ptr<Position>>{
+        typedef std::vector<std::shared_ptr<Position>> data_type;
+        typedef std::vector<std::shared_ptr<Position>> super;
+    public:
+        Pointer_vector<Position>& add(double a, double b, double c){
+            this->push_back(std::make_shared<Position>(a,b,c));
+            return *this;
+        }
+        Pointer_vector<Position>& add(std::istream& is){
+            this->push_back(std::make_shared<Position>(is));
+            return *this;
+        }
     };
     
     
@@ -149,7 +170,7 @@ namespace Cell {
         return acos(v1.dot(v2)/v1.norm()/v2.norm())*180/PI;
     }
     
-    /* Positions Functions */
+    /********** Positions Functions ************/
     inline void Positions::init(int line){
         resize(line,3);
     }
@@ -173,9 +194,28 @@ namespace Cell {
         return is;
     }
     inline std::ostream& Positions::write(std::ostream& os) const{
+        assert(os.good());
         os << *this;
         return os;
     }
+    
+    /********** Positions Functions ************/
+    inline void Position::read(double a,double b,double c){
+        *this << a,b,c;
+    }
+    inline std::istream& Position::read(std::istream& is){
+        assert(is.good());
+        double a,b,c;
+        is >> a >> b >> c;
+        *this << a,b,c;
+        return is;
+    }
+    inline std::ostream& Position::write(std::ostream& os) const{
+        assert(os.good());
+        os << *this;
+        return os;
+    }
+    
     
     /*
      class Position: public Eigen::Matrix<double,1,3,Eigen::RowMajor>{
