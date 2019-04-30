@@ -5,6 +5,8 @@
 #include "Math_linearalgebra.h"
 #include "Math_distributionfunction.h"
 #include "Math_statistics.h"
+#include "Math_hungarian.h"
+#include "Math_optimal_rotation.h"
 
 #endif
 

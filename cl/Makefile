@@ -1,5 +1,5 @@
 CC=g++
-OPTION=-O3 -std=c++11 
+OPTION=-O3 -std=c++11 -I ../eigen-eigen-323c052e1731/ 
 
 SOURCES=${wildcard *.cpp}
 OBJS=${SOURCES:.cpp=.o}
