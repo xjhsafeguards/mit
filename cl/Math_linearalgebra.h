@@ -59,6 +59,10 @@ public:
     Vector3(Vector3<T> &&obj) noexcept: x(std::move(obj.x)),y(std::move(obj.y)),z(std::move(obj.z)){}
     ~Vector3() = default;
     
+    //convert to std::vector
+    explicit operator std::vector<T>() {return std::vector<T>({x,y,z});}
+    std::vector<T> to_vector() {return std::vector<T>({x,y,z});}
+    
     Vector3& operator= (Vector3 v2) &
     {
         swap(*this,v2);
@@ -140,6 +144,10 @@ public:
             return false;
     }
     //other operations
+    T selfdot() const
+    {
+        return x*x+y*y+z*z;
+    }
     T norm() const
     {
         return sqrt(x*x+y*y+z*z);

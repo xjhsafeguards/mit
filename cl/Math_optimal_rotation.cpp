@@ -54,6 +54,27 @@ std::vector <std::vector<double> > Optimal_rotation::Solve(const std::vector <st
     Rotation_mat = Rotation_matrix();
     return Rotated_vectors();
 }
+std::vector<Vector3<double> > Optimal_rotation::Solve(const std::vector <Vector3<double> >& v1,const std::vector <Vector3<double> >& v2){
+    assert(v1.size()==v2.size());
+    M1.resize(3,v1.size());
+    M2.resize(3,v2.size());
+    for(int i=0; i<v1.size(); ++i){
+        M1(0,i) = v1.at(i)[0];
+        M1(1,i) = v1.at(i)[1];
+        M1(2,i) = v1.at(i)[2];
+        M2(0,i) = v2.at(i)[0];
+        M2(1,i) = v2.at(i)[1];
+        M2(2,i) = v2.at(i)[2];
+    }
+    compute_covariance_matrix();
+    compute_rotation_matrix();
+    compute_rotated_vectors();
+    std::vector<Vector3<double> > result;
+    for(int i=0;i<MR.cols();++i){
+        result.push_back(Vector3<double>(MR(0,i),MR(1,i),MR(2,i)));
+    }
+    return result;
+}
 
 void Optimal_rotation::compute_covariance_matrix(){
     assert(M1.rows()==3);
@@ -64,7 +85,7 @@ void Optimal_rotation::compute_covariance_matrix(){
 void Optimal_rotation::compute_rotation_matrix(){
     Eigen::JacobiSVD<Eigen::Matrix3d> svd(H, Eigen::ComputeFullU| Eigen::ComputeFullV);
     R = svd.matrixV() * svd.matrixU().transpose();
-    if(R.determinant()<0){
+    if(!_allow_reflection and R.determinant()<0){
         Eigen::Matrix3d V=svd.matrixV();
         V.col(2) *= -1;
         //R.col(2) *= -1;
