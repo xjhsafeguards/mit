@@ -4,32 +4,16 @@
 
 Optimal_rotation::Optimal_rotation(const std::vector <std::vector<double> >& v1,const std::vector <std::vector<double> >& v2){
     assert(v1.size()==v2.size());
-    M1.resize(3,v1.size());
-    M2.resize(3,v2.size());
-    for(int i=0; i<v1.size(); ++i){
-        M1(0,i) = v1.at(i).at(0);
-        M1(1,i) = v1.at(i).at(1);
-        M1(2,i) = v1.at(i).at(2);
-        M2(0,i) = v2.at(i).at(0);
-        M2(1,i) = v2.at(i).at(1);
-        M2(2,i) = v2.at(i).at(2);
-    }
+    vvtoM(v1,M1);
+    vvtoM(v2,M2);
     compute_covariance_matrix();
     compute_rotation_matrix();
     compute_rotated_vectors();
 }
 std::vector <std::vector<double> > Optimal_rotation::Solve(const std::vector <std::vector<double> >& v1,const std::vector <std::vector<double> >& v2){
     assert(v1.size()==v2.size());
-    M1.resize(3,v1.size());
-    M2.resize(3,v2.size());
-    for(int i=0; i<v1.size(); ++i){
-        M1(0,i) = v1.at(i).at(0);
-        M1(1,i) = v1.at(i).at(1);
-        M1(2,i) = v1.at(i).at(2);
-        M2(0,i) = v2.at(i).at(0);
-        M2(1,i) = v2.at(i).at(1);
-        M2(2,i) = v2.at(i).at(2);
-    }
+    vvtoM(v1,M1);
+    vvtoM(v2,M2);
     compute_covariance_matrix();
     compute_rotation_matrix();
     compute_rotated_vectors();
@@ -38,16 +22,8 @@ std::vector <std::vector<double> > Optimal_rotation::Solve(const std::vector <st
 
 std::vector <std::vector<double> > Optimal_rotation::Solve(const std::vector <std::vector<double> >& v1,const std::vector <std::vector<double> >& v2, std::vector <std::vector<double> >& Rotation_mat){
     assert(v1.size()==v2.size());
-    M1.resize(3,v1.size());
-    M2.resize(3,v2.size());
-    for(int i=0; i<v1.size(); ++i){
-        M1(0,i) = v1.at(i).at(0);
-        M1(1,i) = v1.at(i).at(1);
-        M1(2,i) = v1.at(i).at(2);
-        M2(0,i) = v2.at(i).at(0);
-        M2(1,i) = v2.at(i).at(1);
-        M2(2,i) = v2.at(i).at(2);
-    }
+    vvtoM(v1,M1);
+    vvtoM(v2,M2);
     compute_covariance_matrix();
     compute_rotation_matrix();
     compute_rotated_vectors();
@@ -56,24 +32,12 @@ std::vector <std::vector<double> > Optimal_rotation::Solve(const std::vector <st
 }
 std::vector<Vector3<double> > Optimal_rotation::Solve(const std::vector <Vector3<double> >& v1,const std::vector <Vector3<double> >& v2){
     assert(v1.size()==v2.size());
-    M1.resize(3,v1.size());
-    M2.resize(3,v2.size());
-    for(int i=0; i<v1.size(); ++i){
-        M1(0,i) = v1.at(i)[0];
-        M1(1,i) = v1.at(i)[1];
-        M1(2,i) = v1.at(i)[2];
-        M2(0,i) = v2.at(i)[0];
-        M2(1,i) = v2.at(i)[1];
-        M2(2,i) = v2.at(i)[2];
-    }
+    vV3toM(v1,M1);
+    vV3toM(v2,M2);
     compute_covariance_matrix();
     compute_rotation_matrix();
     compute_rotated_vectors();
-    std::vector<Vector3<double> > result;
-    for(int i=0;i<MR.cols();++i){
-        result.push_back(Vector3<double>(MR(0,i),MR(1,i),MR(2,i)));
-    }
-    return result;
+    return MtovV3(MR);
 }
 
 void Optimal_rotation::compute_covariance_matrix(){
@@ -97,6 +61,57 @@ void Optimal_rotation::compute_rotated_vectors(){
     MR = R*M1;
 }
 
+Eigen::MatrixXd Optimal_rotation::compute_rotated_vectors(const Eigen::MatrixXd& M_in){
+    return R*M_in;
+}
+
+std::vector <std::vector<double> > Optimal_rotation::Mtovv(const Eigen::MatrixXd& M_in){
+    assert(M_in.rows()==3);
+    std::vector <std::vector<double> > result;
+    for(int i=0;i<M_in.cols();++i){
+        result.push_back(std::vector<double>({M_in(0,i),M_in(1,i),M_in(2,i)}));
+    }
+    return result;
+}
+
+std::vector <Vector3<double> > Optimal_rotation::MtovV3(const Eigen::MatrixXd& M_in){
+    assert(M_in.rows()==3);
+    std::vector<Vector3<double> > result;
+    for(int i=0;i<M_in.cols();++i){
+        result.push_back(Vector3<double>(M_in(0,i),M_in(1,i),M_in(2,i)));
+    }
+    return result;
+}
+
+Eigen::MatrixXd Optimal_rotation::to_M(const std::vector <std::vector<double> >& v1){
+    Eigen::MatrixXd tmp;
+    vvtoM(v1,tmp);
+    return tmp;
+}
+
+Eigen::MatrixXd Optimal_rotation::to_M(const std::vector <Vector3<double> >& v1){
+    Eigen::MatrixXd tmp;
+    vV3toM(v1,tmp);
+    return tmp;
+}
+
+void Optimal_rotation::vvtoM(const std::vector <std::vector<double> >& v1, Eigen::MatrixXd& M){
+    M.resize(3,v1.size());
+    for(int i=0; i<v1.size(); ++i){
+        M(0,i) = v1.at(i)[0];
+        M(1,i) = v1.at(i)[1];
+        M(2,i) = v1.at(i)[2];
+    }
+}
+void Optimal_rotation::vV3toM(const std::vector <Vector3<double> >& v1, Eigen::MatrixXd& M){
+    M.resize(3,v1.size());
+    for(int i=0; i<v1.size(); ++i){
+        M(0,i) = v1.at(i)[0];
+        M(1,i) = v1.at(i)[1];
+        M(2,i) = v1.at(i)[2];
+    }
+}
+
 std::vector <std::vector<double> > Optimal_rotation::Rotation_matrix(){
     std::vector <std::vector<double> > result;
     for(int i=0;i<3;++i){
@@ -105,11 +120,12 @@ std::vector <std::vector<double> > Optimal_rotation::Rotation_matrix(){
     return result;
 }
 std::vector <std::vector<double> > Optimal_rotation::Rotated_vectors(){
-    std::vector <std::vector<double> > result;
-    for(int i=0;i<MR.cols();++i){
-        result.push_back(std::vector<double>({MR(0,i),MR(1,i),MR(2,i)}));
-    }
-    return result;
+    return Mtovv(MR);
+}
+
+std::vector <Vector3<double> > Optimal_rotation::Rotated_vectors(const std::vector <Vector3<double> >&v1){
+    Eigen::MatrixXd _M = R*to_M(v1);
+    return MtovV3(_M);
 }
         
 

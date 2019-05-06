@@ -73,17 +73,16 @@ int main(int argc,char** argv){
     //Distributionfunction Dp_o(-4,1,500);
     //Distributionfunction Dp_cl(-4,1,500);
     
-    ofstream ofs[2];
-    for(int i=0;i<2;++i){
+    ofstream ofs[1];
+    for(int i=0;i<1;++i){
         ofs[i].open("CN_6_"+to_string(i)+".xyz");
         ofs[i] << setprecision(10);
     }
-    vector<Vector3<double> > ref_pos;
+    vector<Vector3<double> > ref_pos; // = {Vector3<double>(HCl_cutoff,0,0),Vector3<double>(0,HCl_cutoff,0),Vector3<double>(-HCl_cutoff,0,0),Vector3<double>(0,-HCl_cutoff,0),Vector3<double>(0,0,HCl_cutoff),Vector3<double>(0,0,-HCl_cutoff)};
     
     for(int fc=0; fc!=8;++fc){
         
         ifstream ifs( file_folder + "/data.pos_"+ to_string(fc) + ".xyz");
-        
         for(int i=0;i!=f_end;++i){
             
             std::shared_ptr<cell> cel = make_shared<cell_ipi>();
@@ -100,19 +99,18 @@ int main(int argc,char** argv){
                 int count = certified_H.size();
                 if(count == 6){
                     // construct a list of 6 positions
-                    ////cout << "test 0" << endl;
                     vector<Vector3<double> > pos_list;
                     for(const auto& atom : certified_H){
                         pos_list.push_back(atom->cart().shortest_BC(cel->atoms()[0]->cart(),cel->boxp()->diagonal()));
                     }
-                    sort(pos_list.begin(),pos_list.end(),[](Vector3<double>& a,Vector3<double>& b){return a.norm()<b.norm();});
-                    ofs[1] << count+1 << '\n' << "SS: " << i << '\n';
-                    ofs[1] << " Cl 0 0 0" << '\n';
-                    ////cout << "test 3" << endl;
-                    for(const auto& atom : pos_list){
-                        ofs[1] << " H  ";
-                        ofs[1] << atom << '\n';
-                    }
+                    //sort(pos_list.begin(),pos_list.end(),[](Vector3<double>& a,Vector3<double>& b){return a.norm()<b.norm();});
+                    /*
+                     ofs[1] << count+1 << '\n' << "SS: " << i << '\n';
+                     ofs[1] << " Cl 0 0 0" << '\n';
+                     for(const auto& atom : pos_list){
+                     ofs[1] << " H  ";
+                     ofs[1] << atom << '\n';
+                     }*/
                     // if never store a reference create one
                     if( ref_pos.size() == 0 )
                         ref_pos = pos_list;
@@ -121,18 +119,15 @@ int main(int argc,char** argv){
                     for(int i=0; i<6; ++i)
                         for(int j=0; j<6; ++j)
                             permut_m[i][j] = pow(ref_pos[i].distance(pos_list[j]),2);
-                    ////cout << "test 1" << endl;
                     //solve the linear assignment problem
                     vector<int> per_sol;
                     HungarianAlgorithm ha;
                     ha.Solve(permut_m,per_sol);
-                    ////Print(per_sol);
                     vector<Vector3<double> > sorted_pos(6);
                     for(int i=0;i<6;++i){
                         //sorted_pos[per_sol[i]] = rot_pos[i];
                         sorted_pos[i] = rot_pos[per_sol[i]];
                     }
-                    ////cout << "test 2" << endl;
                     //solve the rotation problem
                     Optimal_rotation orot;
                     orot.allow_reflection();
@@ -153,12 +148,10 @@ int main(int argc,char** argv){
                      */
                     ofs[0] << count+1 << '\n' << "SS: " << i << '\n';
                     ofs[0] << " Cl 0 0 0" << '\n';
-                    //cout << "test 3" << endl;
                     for(const auto& atom : result_pos){
                         ofs[0] << " H  ";
                         ofs[0] << atom << '\n';
                     }
-                    //cout << "test 4" << endl;
                 }
             }
             cout << "read bead" << fc << " snapshot " << i << '\r' << flush;
@@ -166,4 +159,5 @@ int main(int argc,char** argv){
     }
 }
 
-    
+
+

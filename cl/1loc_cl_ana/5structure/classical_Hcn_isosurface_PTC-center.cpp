@@ -2,6 +2,7 @@
 #include <chrono>
 #include <cstring>
 #include <algorithm>
+#include <utility>
 
 #include "Math.h"
 #include "Cell.h"
@@ -65,23 +66,23 @@ int main(int argc,char** argv){
     cout << "OO_cutoff :" + to_string(OO_cutoff) << endl;
     
     //auto Dp = new Distributionfunction2D(-OCl_cutoff,0,500,-0.5,14.5,15);
-    //molecule_manip* water = new water_manip();
+    molecule_manip* water = new water_manip();
     //int CN,nptc=20,ncn=15;
     //double PTCAVG,PTC_low=-OCl_cutoff,PTC_up=0;
     //vector<vector<int> > PTC_CN(nptc,vector<int>(ncn));
     
     //Distributionfunction Dp_o(-4,1,500);
     //Distributionfunction Dp_cl(-4,1,500);
-
-    ifstream ifs1(file_folder+"/cl.cel");
-    ifstream ifs2(file_folder+"/cl.pos");
     
-    ofstream ofs[2];
-    for(int i=0;i<2;++i){
+    ofstream ofs[1];
+    for(int i=0;i<1;++i){
         ofs[i].open("CN_6_"+to_string(i)+".xyz");
         ofs[i] << setprecision(10);
     }
-    vector<Vector3<double> > ref_pos;
+    vector<Vector3<double> > ref_pos; // = {Vector3<double>(HCl_cutoff,0,0),Vector3<double>(0,HCl_cutoff,0),Vector3<double>(-HCl_cutoff,0,0),Vector3<double>(0,-HCl_cutoff,0),Vector3<double>(0,0,HCl_cutoff),Vector3<double>(0,0,-HCl_cutoff)};
+    
+    ifstream ifs1(file_folder+"/cl.cel");
+    ifstream ifs2(file_folder+"/cl.pos");
     
     for(int i=0;i!=f_end;++i){
         
@@ -91,79 +92,96 @@ int main(int argc,char** argv){
         
         if(i>f_start and (i-f_start)%f_step == 0){
             
-            vector<shared_ptr<position>> certified_H;
-            for(const auto& atom : cel->atoms()){
-                if(atom->check_type("H") and atom->distance(*cel->atoms()[0]) < HCl_cutoff ){
-                    certified_H.push_back(atom);
+            water->read(*cel);
+            vector<pair<double,shared_ptr<position> > > certified_H;
+            for(const auto& mol : cel->mols("H2O")){
+                double HCl1 = mol->atoms()[1]->distance(*(cel->atoms()[0]));
+                double HCl2 = mol->atoms()[2]->distance(*(cel->atoms()[0]));
+                double OCl = mol->atoms()[0]->distance(*(cel->atoms()[0]));
+                double OH1 = mol->atoms()[1]->distance(*(mol->atoms()[0]));
+                double OH2 = mol->atoms()[2]->distance(*(mol->atoms()[0]));
+                double PTC1 = OH1 - HCl1;
+                double PTC2 = OH2 - HCl2;
+                if( HCl1 < HCl_cutoff){
+                    certified_H.push_back(make_pair(PTC1,mol->atoms()[1]));
+                }
+                if( HCl2 < HCl_cutoff){
+                    certified_H.push_back(make_pair(PTC2,mol->atoms()[2]));
                 }
             }
+            /*
+             for(const auto& atom : cel->atoms()){
+             if(atom->check_type("H") and atom->distance(*cel->atoms()[0]) < HCl_cutoff ){
+             certified_H.push_back(atom);
+             }
+             }*/
             int count = certified_H.size();
             if(count == 6){
+                //sort by PTC
+                sort(certified_H.begin(),certified_H.end(),[](pair<double,shared_ptr<position> >& a,pair<double,shared_ptr<position> >& b){return a.first<b.first;});
                 // construct a list of 6 positions
-                ////cout << "test 0" << endl;
                 vector<Vector3<double> > pos_list;
                 for(const auto& atom : certified_H){
-                    pos_list.push_back(atom->cart().shortest_BC(cel->atoms()[0]->cart(),cel->boxp()->diagonal()));
+                    pos_list.push_back(atom.second->cart().shortest_BC(cel->atoms()[0]->cart(),cel->boxp()->diagonal()));
                 }
-                sort(pos_list.begin(),pos_list.end(),[](Vector3<double>& a,Vector3<double>& b){return a.norm()<b.norm();});
-                ofs[1] << count+1 << '\n' << "SS: " << i << '\n';
-                ofs[1] << " Cl 0 0 0" << '\n';
-                ////cout << "test 3" << endl;
-                for(const auto& atom : pos_list){
-                    ofs[1] << " H  ";
-                    ofs[1] << atom << '\n';
-                }
+                //sort(pos_list.begin(),pos_list.end(),[](Vector3<double>& a,Vector3<double>& b){return a.norm()<b.norm();});
+                // rotate the position of PTC min to 001
+                Optimal_rotation orot1;
+                orot1.Solve(vector<Vector3<double>>{pos_list[0]},vector<Vector3<double>>{Vector3<double>(0,0,1)});
+                auto rot_pos = orot1.Rotated_vectors(pos_list);
+                
                 // if never store a reference create one
                 if( ref_pos.size() == 0 )
-                    ref_pos = pos_list;
+                    ref_pos = rot_pos;
+                //permutation
                 //construct a 6*6 matrix
                 vector<vector<double> > permut_m(6,vector<double>(6));
                 for(int i=0; i<6; ++i)
                     for(int j=0; j<6; ++j)
-                        permut_m[i][j] = pow(ref_pos[i].distance(pos_list[j]),2);
-                ////cout << "test 1" << endl;
+                        permut_m[i][j] = pow(ref_pos[i].distance(rot_pos[j]),2);
                 //solve the linear assignment problem
                 vector<int> per_sol;
                 HungarianAlgorithm ha;
                 ha.Solve(permut_m,per_sol);
-                ////Print(per_sol);
                 vector<Vector3<double> > sorted_pos(6);
                 for(int i=0;i<6;++i){
                     //sorted_pos[per_sol[i]] = rot_pos[i];
                     sorted_pos[i] = rot_pos[per_sol[i]];
                 }
-                ////cout << "test 2" << endl;
+                
                 //solve the rotation problem
                 Optimal_rotation orot;
                 orot.allow_reflection();
                 auto result_pos = orot.Solve(sorted_pos,ref_pos);
                 auto rotation_m = orot.Rotation_matrix();
                 /*
-                cout << endl;
-                double d1=0,d2=0,d3=0;
-                for(int i=0;i<6;++i){
-                    //cout << result_pos[i] << " | " << sorted_pos[i] << " | " << ref_pos[i] << endl;
-                    d1 +=  pow(result_pos[i].distance(ref_pos[i]),2);
-                    d2 +=  pow(sorted_pos[i].distance(ref_pos[i]),2);
-                    d3 +=  pow(ref_pos[i].distance(ref_pos[i]),2);
-                }
-                cout << d1 <<  " | " << d2 << " | " << d3;
-                //if(d1 > d2) cout << "   ******************";
-                cout << endl;
+                 cout << endl;
+                 double d1=0,d2=0,d3=0;
+                 for(int i=0;i<6;++i){
+                 //cout << result_pos[i] << " | " << sorted_pos[i] << " | " << ref_pos[i] << endl;
+                 d1 +=  pow(result_pos[i].distance(ref_pos[i]),2);
+                 d2 +=  pow(sorted_pos[i].distance(ref_pos[i]),2);
+                 d3 +=  pow(ref_pos[i].distance(ref_pos[i]),2);
+                 }
+                 cout << d1 <<  " | " << d2 << " | " << d3;
+                 //if(d1 > d2) cout << "   ******************";
+                 cout << endl;
                  */
-                ofs[0] << count+1 << '\n' << "SS: " << i << '\n';
+                ofs[0] << count+1 << '\n' << "SS: " << i << " PTC: ";
+                for(const auto& item: certified_H)
+                    ofs[0] << item.first << " ";
+                ofs[0] <<'\n';
                 ofs[0] << " Cl 0 0 0" << '\n';
-                //cout << "test 3" << endl;
                 for(const auto& atom : result_pos){
                     ofs[0] << " H  ";
                     ofs[0] << atom << '\n';
                 }
-                //cout << "test 4" << endl;
             }
         }
         cout << "Read snapshot " << i << '\r' << flush;
     }
-
+    
 }
 
-    
+
+

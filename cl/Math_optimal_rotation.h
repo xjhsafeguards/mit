@@ -18,6 +18,15 @@ class Optimal_rotation{
     void compute_covariance_matrix();
     void compute_rotation_matrix();
     void compute_rotated_vectors();
+    Eigen::MatrixXd compute_rotated_vectors(const Eigen::MatrixXd&);
+    
+    //format trans
+    std::vector <std::vector<double> > Mtovv(const Eigen::MatrixXd&);
+    std::vector <Vector3<double> > MtovV3(const Eigen::MatrixXd&);
+    Eigen::MatrixXd to_M(const std::vector <std::vector<double> >&);
+    Eigen::MatrixXd to_M(const std::vector <Vector3<double> >&);
+    void vvtoM(const std::vector <std::vector<double> >&, Eigen::MatrixXd&);
+    void vV3toM(const std::vector <Vector3<double> >&, Eigen::MatrixXd&);
     
 public:
     Optimal_rotation(){};
@@ -31,6 +40,9 @@ public:
     std::vector <Vector3<double> > Solve(const std::vector <Vector3<double> >& v1,const std::vector <Vector3<double> >& v2);
     std::vector <std::vector<double> > Rotation_matrix();
     std::vector <std::vector<double> > Rotated_vectors();
+    
+    //different rotation
+    std::vector <Vector3<double> > Rotated_vectors(const std::vector <Vector3<double> >&);
 };
 
 /*

@@ -7,6 +7,7 @@
 #include "Math_statistics.h"
 #include "Math_hungarian.h"
 #include "Math_optimal_rotation.h"
+#include "Math_general_algorithm.h"
 
 #endif
 
