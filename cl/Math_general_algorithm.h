@@ -16,8 +16,10 @@ namespace MGA{
     template<typename iterator, typename T> double integrate_simpson(iterator begin, iterator end, T dx);
     
     // Fx stores in F(x)
+    template<typename F> double function_integrate(double x0, double dx, int N, F in_f);
+    template<typename F,typename iterator> void partial_integrate(double x0, double dx, int N, double y0, double dy, int Ny, iterator result, F in_f);
     
-    
+    template<typename iterator,typename F> double function_integrate(double x0, double dx, int N, iterator begin, F in_f);
     
     /************************************************************
      fourier_transform
@@ -118,7 +120,7 @@ namespace MGA{
     double function_integrate(double x0, double dx, int N, F in_f)
     {
         if(N<2) throw(std::range_error("INTEGRATE: lest than two point"));
-        double result= -0.5*F(x0);
+        double result= -0.5*in_f(x0);
         for(int i=0;i<N;++i){
             result += in_f(x0);
             x0 += dx;
@@ -132,9 +134,23 @@ namespace MGA{
     void partial_integrate(double x0, double dx, int N, double y0, double dy, int Ny, iterator result, F in_f)
     {
         for(int i=0; i<N; ++i){
-            *(result++) = function_integrate(x0,dx,N,[&y0](double x){return F(x,y0);});
+            *(result++) = function_integrate(x0,dx,N,[&y0,&in_f](double x){return in_f(x,y0);});
             y0 += dy;
         }
+    }
+    
+    template<typename iterator,typename F>
+    double function_integrate(double x0, double dx, int N, iterator begin, F in_f)
+    {
+        if(N<2) throw(std::range_error("INTEGRATE: lest than two point"));
+        double result= -0.5*(*begin)*in_f(x0);
+        for(int i=0;i<N;++i){
+            result += (*begin)*in_f(x0);
+            ++begin;
+            x0 += dx;
+        }
+        result -=  -0.5*(*begin)*in_f(x0);
+        return result*dx;
     }
 }
 

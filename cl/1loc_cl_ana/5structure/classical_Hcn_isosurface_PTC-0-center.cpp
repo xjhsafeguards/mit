@@ -79,7 +79,7 @@ int main(int argc,char** argv){
         ofs[i].open("CN_6_"+to_string(i)+".xyz");
         ofs[i] << setprecision(10);
     }
-    vector<Vector3<double> > ref_pos; // = {Vector3<double>(HCl_cutoff,0,0),Vector3<double>(0,HCl_cutoff,0),Vector3<double>(-HCl_cutoff,0,0),Vector3<double>(0,-HCl_cutoff,0),Vector3<double>(0,0,HCl_cutoff),Vector3<double>(0,0,-HCl_cutoff)};
+    vector<Vector3<double> > ref_pos = {Vector3<double>(HCl_cutoff,0,0),Vector3<double>(0,HCl_cutoff,0),Vector3<double>(-HCl_cutoff,0,0),Vector3<double>(0,-HCl_cutoff,0),Vector3<double>(0,0,HCl_cutoff),Vector3<double>(0,0,-HCl_cutoff)};
     
     ifstream ifs1(file_folder+"/cl.cel");
     ifstream ifs2(file_folder+"/cl.pos");
@@ -118,7 +118,7 @@ int main(int argc,char** argv){
             int count = certified_H.size();
             if(count == 6){
                 //sort by PTC
-                sort(certified_H.begin(),certified_H.end(),[](pair<double,shared_ptr<position> >& a,pair<double,shared_ptr<position> >& b){return a.first<b.first;});
+                sort(certified_H.begin(),certified_H.end(),[](pair<double,shared_ptr<position> >& a,pair<double,shared_ptr<position> >& b){return a.first>b.first;});
                 // construct a list of 6 positions
                 vector<Vector3<double> > pos_list;
                 for(const auto& atom : certified_H){
@@ -126,10 +126,10 @@ int main(int argc,char** argv){
                 }
                 //sort(pos_list.begin(),pos_list.end(),[](Vector3<double>& a,Vector3<double>& b){return a.norm()<b.norm();});
                 // rotate the position of PTC min to 001
-                //Optimal_rotation orot1;
-                //orot1.Solve(vector<Vector3<double>>{pos_list[0]},vector<Vector3<double>>{Vector3<double>(0,0,1)});
-                //auto rot_pos = orot1.Rotated_vectors(pos_list);
-                auto rot_pos=pos_list;
+                Optimal_rotation orot1;
+                orot1.Solve(vector<Vector3<double>>{pos_list[0]},vector<Vector3<double>>{Vector3<double>(0,0,1)});
+                auto rot_pos = orot1.Rotated_vectors(pos_list);
+                //auto rot_pos=pos_list;
                 
                 // if never store a reference create one
                 if( ref_pos.size() == 0 )

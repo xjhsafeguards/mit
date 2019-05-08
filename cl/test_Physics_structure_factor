@@ -1,0 +1,51 @@
+#include <iomanip>
+#include <chrono>
+#include <cstring>
+#include <fstream>
+
+#include "Math.h"
+#include "Cell.h"
+#include "Cell_Wannier90.h"
+#include "Cell_TEMP.h"
+#include "Cell_QECP.h"
+#include "Cell_IPI.h"
+#include "Molecule_water.h"
+#include "Physics_structure_factor.h"
+
+using namespace std;
+using namespace chrono;
+
+
+template<typename T>
+void Print(const vector<T>& inv,ostream& os=cout){
+    for( const auto& d: inv)
+        //os << setw(10) << d;
+        os << d << " ";
+    os << endl;
+}
+
+int main(int argc,char** argv){
+    vector<double> GHH;
+    ifstream ifs("G_OO_OH_HH_OOO-D.txt");
+    ifs.ignore(1000,'\n');
+    double tmp;
+    ifs >> tmp >> tmp >> tmp >> tmp;
+    while(ifs){
+        GHH.push_back(tmp);
+        ifs.ignore(1000,'\n');
+        ifs >> tmp >> tmp >> tmp >> tmp;
+    }
+    Structure_factor Sq;
+    Sq.Solve(GHH.cbegin(),GHH.cend(),0.012,0.067,0.006,10000);
+    
+    ofstream ofs("Sq.txt");
+    ofs << setprecision(5);
+    
+    auto y = Sq.get_s();
+    auto x = Sq.get_q();
+    
+    for(int i=0; i<x.size(); ++i){
+        ofs << setw(10) << x[i] << setw(10) << y[i] << endl;
+    }
+    
+}
