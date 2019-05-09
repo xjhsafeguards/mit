@@ -196,6 +196,12 @@ public:
         while(z < 0)
             z += BC.z;
     }
+    Vector3 get_normal_BC(const Vector3 &BC=Vector3(1,1,1)) const
+    {
+        Vector3 tmp(*this);
+        tmp.normal_BC(BC);
+        return tmp;
+    }
     //point like actions
     //calculation distance between *this and v1 using boundary condition BC
     T distance_BC(const Vector3 &v1,const Vector3 &BC=Vector3(1,1,1)) const

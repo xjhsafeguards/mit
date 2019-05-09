@@ -111,6 +111,13 @@ public:
     //output position in fraction or cartesian
     virtual data_type frac() const = 0;
     virtual data_type cart() const = 0;
+    virtual data_type normal_frac() const{
+        return frac().get_normal_BC();
+    }
+    virtual data_type normal_cart() const{
+        return cart().get_normal_BC(boxp->diagonal());
+    }
+    
     // distance between this and p
     virtual double distance(const position& p) const = 0;
     // angle between p1-this-p2 in radian
