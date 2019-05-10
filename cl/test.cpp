@@ -102,6 +102,8 @@ int main(int argc,char** argv){
     Vector3<double> te(3,2,1);
     auto te2= static_cast<vector<double>>(te);
     Print(te2);
+    
+    
 
     //double cell_vol=0;
     //int scount=0;
