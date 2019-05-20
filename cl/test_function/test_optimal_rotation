@@ -1,7 +1,6 @@
 #include <iomanip>
 #include <chrono>
 #include <cstring>
-#include <functional>
 
 #include "Math.h"
 #include "Cell.h"
@@ -10,7 +9,6 @@
 #include "Cell_QECP.h"
 #include "Cell_IPI.h"
 #include "Molecule_water.h"
-#include "Utility_time.h"
 
 using namespace std;
 using namespace chrono;
@@ -24,24 +22,6 @@ void Print(const vector<T>& inv,ostream& os=cout){
     os << endl;
 }
 
-double get_random(double min, double max) {
-    /* Returns a random double between min and max */
-    return max * ((double) rand() / (double) RAND_MAX) - min;
-}
-
-void MOD(double a,double b){
-    cout << to_string(a) + " mod " + to_string(b) + " = " << remainder(a,b) << '\n';
-}
-
-double BC(double a, double b){
-    while(a >= b/2){
-        a -= b;
-    }
-    while(a < -b/2){
-        a += b;
-    }
-    return a;
-}
 
 int main(int argc,char** argv){
     
@@ -81,36 +61,49 @@ int main(int argc,char** argv){
     cout << "OCl_cutoff :" + to_string(OCl_cutoff) << endl;
     cout << "HCl_cutoff :" + to_string(HCl_cutoff) << endl;
     cout << "OO_cutoff :" + to_string(OO_cutoff) << endl;
-
-    cout << "Modulus test\n";
-
-    double a,b,r1,r2;
     
-    for(int i=0; i< 10000; ++i){
-        a = get_random(-1000,1000);
-        b = get_random(0,100);
-        //cout << a << " " << b << endl;
-        //cout << "test1" << endl;
-        GTIMER.start("reminder");
-        //cout << "test2" << endl;
-        r1 = remainder(a,b);
-        GTIMER.stop("reminder");
-        //cout << "test3" << endl;
-        GTIMER.start("BC");
-        //cout << "test4" << endl;
-        r2 = BC(a,b);
-        GTIMER.stop("BC");
-        //cout << "test5" << endl;
-        if((r1-r2)>0.00001)
-            cout << a << " " << b << " " << r1 << " " << r2 << endl;
-        //cout << "test6" << endl;
+    HungarianAlgorithm hg;
+    vector<vector<double> > a;
+    vector<int> result;
+    srand(time(NULL));
+    
+    for(int i=0;i<10;++i){
+        vector<double> tmp;
+         for(int j=0;j<10;++j)
+             tmp.push_back(rand() % 100 + 1);
+        Print(tmp);
+        a.push_back(tmp);
     }
-    cout << endl;
     
-    GTIMER.summerize(cout);
+    hg.Solve(a,result);
+    Print(result);
     
-}
-
+    vector<vector<double> > b,c,d;
+    for(int i=0;i<1;++i){
+        b.push_back(vector<double>({1,0,0}));
+        b.push_back(vector<double>({0,1,0}));
+        b.push_back(vector<double>({0,0,1}));
+    }
+    for(int i=0;i<1;++i){
+        c.push_back(vector<double>({0,0,1}));
+        c.push_back(vector<double>({0,1,0}));
+        c.push_back(vector<double>({-0.8,0.2,0}));
+    }
+    Optimal_rotation ort(b,c);
+    d = ort.Rotation_matrix();
+    for(const auto& v: d){
+        Print(v);
+    }
+    d = ort.Rotated_vectors();
+    for(const auto& v: d){
+        Print(v);
+    }
+    
+    Vector3<double> te(3,2,1);
+    auto te2= static_cast<vector<double>>(te);
+    Print(te2);
+    
+    
 
     //double cell_vol=0;
     //int scount=0;
@@ -208,3 +201,4 @@ int main(int argc,char** argv){
 */
     
 
+}
