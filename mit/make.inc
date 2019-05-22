@@ -1,0 +1,20 @@
+TOPDIR=$(shell git rev-parse --show-toplevel)/
+
+# Compiler
+CC=g++
+
+# Define and include flags
+DFLAGS= 
+IFLAGS=-I$(TOPDIR)/eigen-eigen-323c052e1731/ -I$(TOPDIR)/mit/include/ 
+
+# C flags
+CFLAGS=-O3 -std=c++11 $(DFLAGS) $(IFLAGS) 
+
+# Linker
+LD=g++
+LDFLAGS=#-static
+LD_LIBS=
+
+# ar command and flags - for most architectures: AR = ar, ARFLAGS = ruv
+#AR             = ar
+#ARFLAGS        = ruv

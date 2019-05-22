@@ -1,62 +1,167 @@
-#include "Base_cell.h"
+#include <iomanip>
+#include <chrono>
+#include <cstring>
+#include <functional>
+#include <cmath>
+
+#include <Utility_time.h>
 
 using namespace std;
+using namespace chrono;
 
-int main(){
-    Box b1,b2;
-    //cout << "input your cell" << endl;
-    //b1.read(cin);
-    cout << "your cell b2:" << endl;
-    //b1.write(cout) << endl;
-    b2.read(3,4,3);
-    b2 << 1,2,3,4,5,6,7,8,10;
-    cout << b2.inverse() << endl;
-    b2.write(cout) << endl;
-    b2 *=2;
-    b2.write(cout) << endl;
-    cout << b2.volume() << endl;
-    Vector v1,v2,v3;
-    v1 << 0,0,0;
-    v2 << 0.5,0,0;
-    v3 << 0,0.5,0;
-    cout << "v1,v2,v3:\n";
-    cout << v1 << '\n' << v2 << '\n' << v3 << endl;
-    cout << b2.shortest_fvector(v1,v2) << endl;
-    cout << b2.cdistance(v1,v2) << " " << b2.fdistance(v1,v2) << endl;
-    cout << b2.cangle(v1,v2,v3) << " " << b2.fangle(v1,v2,v3) << endl;
-    cout << b2.cangle(v2,v1,v3) << " " << b2.fangle(v2,v1,v3) << endl;
-    cout << b2.to_fposition(b2.to_cposition(b2.to_fposition(b2.to_cposition(v2))))<< endl;
-    
-    {
-        cout << "test for positions" << endl;
-        Positions p1;
-        p1.init(2);
-        p1 << 1,2,3,4,5,6;
-        cout << p1 << endl;
-        p1.read(1,2,3,4);
-        p1.write(cout)<< endl;
-        //cout << "put your first line of pi: ";
-        //p1.read(0,cin);
-        //p1.write(cout) << endl;
-        //cout << p1(1) << endl;
-        
-        const Vector& r1= p1.row(0),& r2=p1.row(1);
-        //r1 << 0,1,2;
-        cout << r1 << endl << r2 << endl;
-        cout << p1 << endl;
-    }
-    
-    {
-        cout << "test for position" << endl;
-        Position p1(0,0,0),p2;
-        p2 << 4,5,6;
-        p2.read(1,1,1);
-        cout << p1 << p2 << endl;
-        cout << b2 << endl;
-        cout << b2.cdistance(p1,p2) << " " << b2.fdistance(p1,p2) << endl;
-        Position_pv pv1;
-        pv1.add(0,0,0).add(cin);
-        cout << *pv1[1] << endl;
-    }
 
+template<typename T>
+void Print(const vector<T>& inv,ostream& os=cout){
+    for( const auto& d: inv)
+        //os << setw(10) << d;
+        os << d << " ";
+    os << endl;
 }
+
+double get_random(double min, double max) {
+    /* Returns a random double between min and max */
+    return max * ((double) rand() / (double) RAND_MAX) - min;
+}
+
+void MOD(double a,double b){
+    cout << to_string(a) + " mod " + to_string(b) + " = " << remainder(a,b) << '\n';
+}
+
+double BC(double a, double b){
+    while(a >= b/2){
+        a -= b;
+    }
+    while(a < -b/2){
+        a += b;
+    }
+    return a;
+}
+
+int main(int argc,char** argv){
+
+    cout << "Modulus test\n";
+
+    double a,b,r1,r2;
+    
+    for(int i=0; i< 10000; ++i){
+        a = get_random(-1000,1000);
+        b = get_random(0,100);
+        //cout << a << " " << b << endl;
+        //cout << "test1" << endl;
+        GTIMER.start("reminder");
+        //cout << "test2" << endl;
+        r1 = remainder(a,b);
+        GTIMER.stop("reminder");
+        //cout << "test3" << endl;
+        GTIMER.start("BC");
+        //cout << "test4" << endl;
+        r2 = BC(a,b);
+        GTIMER.stop("BC");
+        //cout << "test5" << endl;
+        if((r1-r2)>0.00001)
+            cout << a << " " << b << " " << r1 << " " << r2 << endl;
+        //cout << "test6" << endl;
+    }
+    cout << endl;
+    
+    GTIMER.summerize(cout);
+    
+}
+
+
+    //double cell_vol=0;
+    //int scount=0;
+    /*
+    //auto Dp = new Distributionfunction(0,6,500);
+    Distributionfunction* Dp[4];
+    for(int i=0;i!=4;++i){
+        //Dp[i] = new Distributionfunction(0,6,500);
+        Dp[i] = new Distributionfunction(0,180,500); // OClO, ClOO, OOO, OO(cl-bonded)O
+    }
+    //for(int i=4;i!=6;++i){
+    // Dp[i] = new Distributionfunction(0,180,500);
+    //}
+    
+    for(int fc=0; fc!=8;++fc){
+        
+        ifstream ifs( file_folder + "/data.pos_"+ to_string(fc) + ".xyz");
+        //molecule_manip* water = new water_manip();
+        
+        for(int i=0;i!=f_end;++i){
+            
+            std::shared_ptr<cell> cel = make_shared<cell_ipi>();
+            cel->read(ifs);
+            
+            if(i>f_start and (i-f_start)%f_step == 0){
+                
+                vector<shared_ptr<position> > Os_in_Cl;
+                for(int i=1;i<64;++i){
+                    bool is_in=false;
+                    if(cel->atoms()[0]->distance(*cel->atoms()[i])<OCl_cutoff){
+                        Os_in_Cl.push_back(cel->atoms()[i]);
+                        is_in=true;
+                    }
+                    vector<int> Oindex_in_Oi;
+                    for(int j=1;j<64;++j){
+                        if( i!=j and cel->atoms()[i]->distance(*cel->atoms()[j])<OO_cutoff)
+                            Oindex_in_Oi.push_back(j);
+                    }
+                    for(int j: Oindex_in_Oi){
+                        for(int k: Oindex_in_Oi)
+                        {
+                            if(j<k){
+                                double Angle=cel->atoms()[i]->angle(*cel->atoms()[j],*cel->atoms()[k]);
+                                Dp[2]->read(Angle); // OOO
+                                if(is_in)
+                                    Dp[3]->read(Angle);
+                            }
+                        }
+                    }
+                }
+                for( const auto& atom1: Os_in_Cl){
+                    for( const auto& atom2: Os_in_Cl){
+                        if(atom1!=atom2 and atom1->distance(*atom2)<OO_cutoff)
+                            //data[0].push_back(cel->atoms()[0]->angle(*atom1,*atom2)); // OClO
+                            Dp[0]->read(cel->atoms()[0]->angle(*atom1,*atom2)); // OClO
+                    }
+                    for(int i=1;i<64;++i){
+                        if(atom1->distance(*cel->atoms()[i])<OO_cutoff)
+                            //data[1].push_back(atom1->angle(*cel->atoms()[0],*cel->atoms()[i])); // ClOO
+                            Dp[1]->read(atom1->angle(*cel->atoms()[0],*cel->atoms()[i])); // ClOO
+                    }
+                }
+            }
+            cout << "read bead" << fc << " snapshot " << i << '\r' << flush;
+        }
+    }
+    
+    //cell_vol /= scount;
+    
+    vector<double> X=Dp[0]->get_x();
+    vector<double> Y[4];
+    for(int i=0;i!=4;++i){
+        //Dp[i]->set_dimension(3);
+        //Dp[i]->set_normalize(cell_vol);
+        Y[i] = Dp[i]->get_y();
+    }
+    //for(int i=4;i!=6;++i){
+        //Dp[i]->set_dimension(3);
+        //Dp[i]->set_normalize(cell_vol);
+        //Y[i] = Dp[i]->get_y();
+    //}
+    
+    ofstream ofs("G_OClO_ClOO_OOO.txt");
+    ofs << setprecision(10);
+    
+    ofs << "#" << setw(19) << "R" << setw(20) << "OClO" << setw(20) << "ClOO" << setw(20) << "OOO" << setw(20) << "OO(cl)O" << endl;
+    
+    for(int i=0;i<X.size();++i){
+        ofs << setw(20) << X[i];
+        for(int j=0;j!=4;++j){
+            ofs << setw(20) << Y[j][i];
+        }
+        ofs << '\n';
+    }
+*/
+    
+
