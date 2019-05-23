@@ -1,6 +1,5 @@
+#FOLDERS=Cell-old Math Physics Utilit include
 include make.inc
-
-FOLDERS=Utilit Math
 
 SOURCES=${wildcard *.cpp}
 OBJS=${SOURCES:.cpp=.o}

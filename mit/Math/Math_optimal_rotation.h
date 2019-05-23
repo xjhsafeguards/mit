@@ -8,7 +8,11 @@
 //********************************************************//
 // A single function wrapper for solving rotation problem
 // Read in two n*3 vectors
-// Output the rotation matrix from v1 to v2
+//  have interface with vector<vector<double>> or vector<Vector3<double>>
+// Rotation_matrix();
+//  Output the rotation matrix from v1 to v2
+// Rotated_vectors();
+//  Output the rotated matrix of v1 to v2
 //********************************************************//
 
 class Optimal_rotation{

@@ -3,6 +3,7 @@
 
 #include <ctime>
 #include <map>
+#include <unordered_map>
 #include <string>
 #include <iostream>
 #include <iomanip>
@@ -12,6 +13,7 @@
   with function reset(),start(),stop(),get_total()
  The Timers class
   with function reset(str),start(str),stop(str)
+  add(str,timer)
   print(os),summerize(os) // show all timer
   show_time(os,note) // current time
  */
@@ -31,17 +33,18 @@ namespace Utility_time {
         double get_total() const;
     };
     
-    class Timers: public std::map<std::string,Timer>{
+    class Timers: public std::unordered_map<std::string,Timer>{
         friend std::ostream& operator<<(std::ostream&,const Timers&);
         
     public:
-        typedef std::map<std::string,Timer> super;
+        typedef std::unordered_map<std::string,Timer> super;
         using super::super;
         
         // timer controls
         void reset(std::string);
         void start(std::string);
         void stop(std::string);
+        void add(std::string,Timer);
         // summerize the result to given ostream
         void print(std::ostream&) const;
         void summerize(std::ostream&) const;
@@ -79,6 +82,9 @@ namespace Utility_time {
     }
     inline void Timers::stop(std::string name){
         (*this)[name].stop();
+    }
+    inline void Timers::add(std::string name,Timer in_timer){
+        (*this)[name]=in_timer;
     }
     inline void Timers::print(std::ostream& os) const{
         os << "----------------------------------" << "\n";

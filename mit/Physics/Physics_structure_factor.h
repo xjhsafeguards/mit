@@ -7,6 +7,15 @@
 
 #include "Math_distributionfunction.h"
 
+/*
+ The Structure_factor class
+  construct() with a given g_r distribution and factor rou, starting point r0 and total points
+  Solve() instead of g_r in distribution but vector iterator and dr should be given
+ 
+  get_s() returns the calculated s(q)
+  get_q() returns the q
+ */
+
 class Structure_factor{
     
     typedef std::vector<double>::const_iterator g_citer;

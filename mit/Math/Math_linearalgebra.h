@@ -183,6 +183,11 @@ public:
     //put this under boudary condition
     void normal_BC(const Vector3 &BC=Vector3(1,1,1))
     {
+        //Jianhang changed at 2019.05.23
+        x=std::fmod(x,BC.x);
+        y=std::fmod(y,BC.y);
+        z=std::fmod(z,BC.z);
+        /*
         while(x >= BC.x)
             x -= BC.x;
         while(x < 0)
@@ -195,6 +200,7 @@ public:
             z -= BC.z;
         while(z < 0)
             z += BC.z;
+         */
     }
     Vector3 get_normal_BC(const Vector3 &BC=Vector3(1,1,1)) const
     {
@@ -206,6 +212,9 @@ public:
     //calculation distance between *this and v1 using boundary condition BC
     T distance_BC(const Vector3 &v1,const Vector3 &BC=Vector3(1,1,1)) const
     {
+        //Jianhang changed at 2019.05.23
+        return Vector3(std::remainder(this->x - v1.x,BC.x),std::remainder(this->y - v1.y,BC.y),std::remainder(this->z - v1.z,BC.z)).norm();
+        /*
         Vector3<T> v2 = v1;
         while((this->x - v2.x) >= BC.x/2)
             v2.x += BC.x;
@@ -220,10 +229,15 @@ public:
         while((this->z - v2.z) < -BC.z/2)
             v2.z -= BC.z;
         return (*this-v2).norm();
+         */
     }
     // calculate the shortest vector this-v1(from v1 to this)
     Vector3 shortest_BC(const Vector3 &v1,const Vector3 &BC=Vector3(1,1,1)) const
     {
+        
+        //Jianhang changed at 2019.05.23
+        return Vector3(std::remainder(this->x - v1.x,BC.x),std::remainder(this->y - v1.y,BC.y),std::remainder(this->z - v1.z,BC.z));
+        /*
         Vector3 v2 = v1;
         while((this->x - v2.x) >= BC.x/2)
             v2.x += BC.x;
@@ -237,7 +251,8 @@ public:
             v2.z += BC.z;
         while((this->z - v2.z) < -BC.z/2)
             v2.z -= BC.z;
-        return (*this-v2);
+         return (*this-v2);
+         */
     }
     double angle_BC(const Vector3 &v2,const Vector3 &v3,const Vector3 &BC=Vector3(1,1,1)) const
     // calculate the angle between v2-this-v3, return the anlge in degree

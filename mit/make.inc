@@ -1,11 +1,13 @@
+
 TOPDIR=$(shell git rev-parse --show-toplevel)/
+FOLDERS=Cell-old Math Physics Utilit 
 
 # Compiler
 CC=g++
 
 # Define and include flags
 DFLAGS= 
-IFLAGS=-I$(TOPDIR)/eigen-eigen-323c052e1731/ -I$(TOPDIR)/mit/include/ 
+IFLAGS=-I$(TOPDIR)/eigen-eigen-323c052e1731/ $(patsubst %,-I$(TOPDIR)/mit/%,$(FOLDERS)) #-I$(TOPDIR)/mit/include/ 
 
 # C flags
 CFLAGS=-O3 -std=c++11 $(DFLAGS) $(IFLAGS) 
