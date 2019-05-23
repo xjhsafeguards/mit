@@ -15,6 +15,7 @@ ${EXECUTABLE}:${OBJS} lib
 
 %.x: %.o lib
 	$(LD) $(LDFLAGS) $< ${wildcard lib/*.a} -o $@ 
+	mv $@ bin/ 
 
 .PHONY : lib
 lib:
@@ -35,5 +36,5 @@ clean:
 		$(MAKE) TLDEPS= clean ) \
 		fi \
 	done
-	@-rm -f *.x *.o *.log lib/*.a
+	@-rm -f *.x *.o *.log lib/*.a bin/*.x
 	@echo "All object cleaned!"
