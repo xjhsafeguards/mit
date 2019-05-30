@@ -22,7 +22,7 @@ std::istream& cell_lammps::_read_timestep(std::istream& is){
     std::string tmps;
     do{
         std::getline(is,tmps);
-    }while(tmps.find("ITEM: TIMESTEP")!=std::string::npos);
+    }while(tmps.find("ITEM: TIMESTEP")==std::string::npos);
     is >> snapshot;
     return is;
 }
@@ -30,7 +30,7 @@ std::istream& cell_lammps::_read_n(std::istream& is){
     std::string tmps;
     do{
         std::getline(is,tmps);
-    }while(tmps.find("ITEM: NUMBER OF ATOMS")!=std::string::npos);
+    }while(tmps.find("ITEM: NUMBER OF ATOMS")==std::string::npos);
     is >> na;
     return is;
 }
@@ -38,7 +38,7 @@ std::istream& cell_lammps::_read_box0(std::istream& is){
     std::string tmps;
     do{
         std::getline(is,tmps);
-    }while(tmps.find("ITEM: BOX")!=std::string::npos);
+    }while(tmps.find("ITEM: BOX")==std::string::npos);
     double a,b,c;
     is >> tmps >> a >> tmps >> tmps >> b >> tmps >> tmps >> c;
     is.ignore(1000,'\n');
@@ -51,7 +51,7 @@ std::istream& cell_lammps::_read_pos(std::istream& is){
     std::string tmps;
     do{
         std::getline(is,tmps);
-    }while(tmps.find("ITEM: ATOMS")!=std::string::npos);
+    }while(tmps.find("ITEM: ATOMS")==std::string::npos);
     int itype;
     for(int i=0; i!=na; ++i){
         std::shared_ptr<position> tmp = std::make_shared<cart_position>();
