@@ -1,10 +1,10 @@
-#Makefile for Cell-old
+#Makefile for Cell
 
 include ../make.inc
 
 SOURCES=${wildcard *.cpp}
 OBJS=${SOURCES:.cpp=.o}
-EXECUTABLE=../lib/libmycellold.a
+EXECUTABLE=../lib/libmycell.a
 
 all:${EXECUTABLE}
 
@@ -18,4 +18,4 @@ ${EXECUTABLE}:${OBJS}
 
 clean:
 	@-rm -f *.o *.a *.log
-	@echo "Cell-old object cleaned!"
+	@echo "Cell object cleaned!"

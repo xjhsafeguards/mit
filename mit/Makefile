@@ -38,3 +38,9 @@ clean:
 	done
 	@-rm -f *.x *.o *.log lib/*.a bin/*.x
 	@echo "All object cleaned!"
+
+
+.PHONY : cleanx
+cleanx:
+	@-rm -f *.x *.o *.log bin/*.x
+	@echo "out folder object cleaned!"

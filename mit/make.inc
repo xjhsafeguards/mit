@@ -1,6 +1,6 @@
 
 TOPDIR=$(shell git rev-parse --show-toplevel)/
-FOLDERS=Cell-old Math Physics Utilit 
+FOLDERS=Cell-old Math Physics Utilit #Cell 
 
 # Compiler
 CC=g++
