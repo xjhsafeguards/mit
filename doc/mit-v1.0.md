@@ -1,4 +1,4 @@
-# MIT folder #
+# MIT-v1.0 folder #
 
 This setup used Eigen for data structures of cells and provide some functions to analyze the system
 
