@@ -1,30 +1,13 @@
-#include <iomanip>
-#include <chrono>
-#include <cstring>
-
-#include "Math_all.h"
 #include "Cell.h"
-#include "Cell_Wannier90.h"
-#include "Cell_TEMP.h"
-#include "Cell_QECP.h"
-#include "Cell_IPI.h"
-#include "Molecule_water.h"
+#include "Math_all.h"
+
+#include <Utility_time.h>
+#include <fstream>
 
 using namespace std;
-using namespace chrono;
-
-
-template<typename T>
-void Print(const vector<T>& inv,ostream& os=cout){
-    for( const auto& d: inv)
-        //os << setw(10) << d;
-        os << d << endl;
-    os << endl;
-}
-
 
 int main(int argc,char** argv){
-    
+    GTIMER.start("all");
     double OCl_cutoff = 3.5;
     double HCl_cutoff = 3;
     string file_folder = ".";
@@ -37,8 +20,8 @@ int main(int argc,char** argv){
         {
             //if(strncmp(argv[i],"-n",2) == 0){string tmp=argv[++i];filename=tmp;}
             //else if(strncmp(argv[i],"-t",2) == 0){string tmp=argv[++i];snapshot_count=stoi(tmp);}
-            if(strncmp(argv[i],"-w",2) == 0){string tmp=argv[++i];water_parameter::OH_distance=stod(tmp);}
-            else if(strncmp(argv[i],"-p",2) == 0){file_folder=argv[++i];}
+            //if(strncmp(argv[i],"-w",2) == 0){string tmp=argv[++i];water_parameter::OH_distance=stod(tmp);}
+            if(strncmp(argv[i],"-p",2) == 0){file_folder=argv[++i];}
             else if(strncmp(argv[i],"-fs",3) == 0){string tmp=argv[++i];f_start=stoi(tmp);}
             else if(strncmp(argv[i],"-fe",3) == 0){string tmp=argv[++i];f_end=stoi(tmp);}
             else if(strncmp(argv[i],"-ocl",4) == 0){string tmp=argv[++i];OCl_cutoff=stod(tmp);}
@@ -75,46 +58,53 @@ int main(int argc,char** argv){
     
     for(int i=0;i!=f_end;++i){
         
-        std::shared_ptr<cell> cel = make_shared<cell_qecp>(cell_qecp({1,63,126},{"Cl","O","H"}));
-        cel->read_box(ifs1);
-        cel->read_atoms(ifs2);
-            vector<vector<double>> data(6); // OH, OO, OCl, HCl, OClO, HClH,
+        Cell_qecp cel;
+        cel.na=190;
+        //std::shared_ptr<cell> cel = make_shared<cell_qecp>(cell_qecp({1,63,126},{"Cl","O","H"}));
+        cel.read_cellp(ifs1);
+        cel.read_atoms(ifs2);
+        vector<vector<double>> data(6); // OH, OO, OCl, HCl, OClO, HClH,
+        
+        if(i>f_start){
             
-            if(i>f_start){
+            for(int i=1; i<64; ++i){
+                //H
+                for(int j=64; j<190; ++j)
+                    data[0].push_back(cel.adistance(i,j));
+                //Cl
+                double dOCl = cel.adistance(i,0);
+                data[2].push_back(dOCl);
+                //O
+                for(int j=1; j<64; ++j){
+                    data[1].push_back(cel.adistance(i,j));
+                    if(dOCl<OCl_cutoff and i!=j and cel.adistance(0,j)<OCl_cutoff)
+                        data[4].push_back(cel.aangle(0,i,j));
+                }
                 
-                for( const auto& atom1: cel->atoms()){
-                    if(atom1->check_type("O"))
-                        for( const auto& atom2: cel->atoms()){
-                            if(atom2->check_type("H"))
-                                data[0].push_back(atom1->distance(*atom2));
-                            if(atom2->check_type("Cl"))
-                                data[2].push_back(atom1->distance(*atom2));
-                            if(atom2->check_type("O")){
-                                data[1].push_back(atom1->distance(*atom2));
-                                if(atom1!=atom2 and atom1->distance(*cel->atoms()[0])<OCl_cutoff and atom2->distance(*cel->atoms()[0])<OCl_cutoff)
-                                    data[4].push_back(cel->atoms()[0]->angle(*atom1,*atom2));
-                            }
-                        }
-                    if(atom1->check_type("H")){
-                        for( const auto& atom2: cel->atoms()){
-                            if(atom2->check_type("H") and atom1!=atom2 and atom1->distance(*cel->atoms()[0])<HCl_cutoff and atom2->distance(*cel->atoms()[0])<HCl_cutoff)
-                                data[5].push_back(cel->atoms()[0]->angle(*atom1,*atom2));
-                            if(atom2->check_type("Cl"))
-                                data[3].push_back(atom1->distance(*atom2));
-                        }
-                    }
-                }
-                cell_vol +=  cel->volume();
-                scount++;
-                for(int i=0;i!=6;++i){
-                    //cout << data[i].size() << '\t';
-                    Dp[i]->read(data[i]);
-                    //cout << Dp[i]->get_valid_count() << '\t';
-                }
-                //cout << endl;
             }
-            cout << "read snapshot " << i << '\r' << flush;
+            for(int i=64; i<190; ++i){
+                //Cl
+                double dHCl = cel.adistance(i,0);
+                data[3].push_back(dHCl);
+                //H
+                for(int j=64; j<190; ++j)
+                    //data[1].push_back(cel.adistance(i,j));
+                    if(dHCl<HCl_cutoff and i!=j and cel.adistance(0,j)<HCl_cutoff)
+                        data[5].push_back(cel.aangle(0,i,j));
+            }
+            
+            
+            cell_vol +=  cel.volume();
+            scount++;
+            for(int i=0;i!=6;++i){
+                //cout << data[i].size() << '\t';
+                Dp[i]->read(data[i]);
+                //cout << Dp[i]->get_valid_count() << '\t';
+            }
+            //cout << endl;
         }
+        cout << "read snapshot " << i << '\r' << flush;
+    }
     
     
     cell_vol /= scount;
@@ -144,7 +134,8 @@ int main(int argc,char** argv){
         }
         ofs << '\n';
     }
-
-    
-
+    GTIMER.stop("all");
+    GTIMER.summerize(cout);
 }
+
+
