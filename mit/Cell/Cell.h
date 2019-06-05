@@ -3,9 +3,12 @@
 
 #include "Box.h"
 #include "Position.h"
+#include "Physics_unit.h"
 
 #include <vector> // std::vector
 #include <string> // std::string
+#include <iostream> // std::istream
+#include <sstream> // std::ostringstream
 
 namespace Cell_space {
     
@@ -24,6 +27,7 @@ namespace Cell_space {
         Positions atoms,wanniers;
 
         // Cell information
+        int cell_type;
         int snapshot;
         double time;
         
@@ -34,6 +38,19 @@ namespace Cell_space {
         std::vector<std::string> type_list; //list of types
         std::vector<int> number_list;
         std::vector<double> mass_list;
+        
+        //IO methods
+        
+        // read in .cel file
+        void read_cel(std::istream&);
+        void skip_cel(std::istream&) const;
+        // read in .pos file and keep cart()
+        void read_pos(std::istream&);
+        void skip_pos(std::istream&) const;
+        
+        // read in .xyz file and returns the comment line
+        std::string read_xyz(std::istream&,double in_unit=1);
+        void skip_xyz(std::istream&) const;
         
     //wrappers for Box functions
         double volume() const{return cellp.volume();}
@@ -49,11 +66,14 @@ namespace Cell_space {
         double adistance(int i,int j) const{return cellp.distance(atom(i),atom(j));}
         double atom_angle(int i,int j,int k) const{return cellp.angle(atom(i),atom(j),atom(k));}
         double aangle(int i,int j,int k) const{return cellp.angle(atom(i),atom(j),atom(k));}
+        void atom_frac(){atoms.frac(cellp);}
+        void afrac(){atoms.frac(cellp);}
+        void atom_cart(){atoms.cart(cellp);}
+        void acart(){atoms.cart(cellp);}
+        
         
         
     //atoms functions
-        
-        
     //wrappers for atoms functions
         template<typename... Ts>
         auto atom(Ts&&... ts) const -> const decltype(atoms.row(std::forward<Ts>(ts)...)){
@@ -68,13 +88,41 @@ namespace Cell_space {
     };
     
     struct Cell_qecp: public Cell{
-        void read_cellp(std::istream&);
-        void skip_cellp(std::istream&) const;
-        void read_atoms(std::istream&);
-        void skip_atoms(std::istream&) const;
-        void read(std::istream&,std::istream&);
-        void skip(std::istream&,std::istream&) const ;
+        //cellp
+        void read_cellp(std::istream& is){read_cel(is);}
+        void skip_cellp(std::istream& is) const{skip_cel(is);}
+        //atoms
+        void read_atoms(std::istream& is){read_pos(is);}
+        void skip_atoms(std::istream& is) const{skip_pos(is);}
+        //all
+        void read(std::istream& is1,std::istream& is2){
+            read_cellp(is1);
+            read_atoms(is2);
+            afrac();
+        }
+        void skip(std::istream& is1,std::istream& is2) const {
+            skip_cellp(is1);
+            skip_atoms(is2);
+        }
     };
+    
+    struct Cell_ipi: public Cell{
+        //cellp
+        void read_cellp1(std::istream&,double in_unit=1);
+        void skip_cellp1(std::istream&){}
+        void read_cellp1(std::string in_string,double in_unit=1){std::istringstream is_com(in_string);read_cellp1(is_com,in_unit);}
+        void skip_cellp1(std::string){}
+        //atoms
+        void read_atoms(std::istream& is,double in_unit=1){read_xyz(is,in_unit);}
+        void skip_atoms(std::istream& is) const{skip_xyz(is);}
+        //all
+        void read(std::istream& is1){
+            std::istringstream is_com(read_xyz(is1,l_bohr));
+            read_cellp1(is_com,l_bohr);
+            afrac();
+        }
+    };
+    
 }
 using namespace Cell_space;
 #endif

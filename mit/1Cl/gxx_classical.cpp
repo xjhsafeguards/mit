@@ -61,8 +61,7 @@ int main(int argc,char** argv){
         Cell_qecp cel;
         cel.na=190;
         //std::shared_ptr<cell> cel = make_shared<cell_qecp>(cell_qecp({1,63,126},{"Cl","O","H"}));
-        cel.read_cellp(ifs1);
-        cel.read_atoms(ifs2);
+        cel.read(ifs1,ifs2);
         vector<vector<double>> data(6); // OH, OO, OCl, HCl, OClO, HClH,
         
         if(i>f_start){

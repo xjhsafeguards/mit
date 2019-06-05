@@ -2,6 +2,9 @@
 
 ### File convert
 #### Qe_deepmd
+Read in prefix=filename qe output and output deepmd .raw files
+* options
+> ./qe_deepmd.x filename
 
 #### Ipi_qe
 Read in Ipi output file pos.xyz write to qe format .pos and .cel file
