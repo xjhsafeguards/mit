@@ -31,6 +31,8 @@ std::vector<double> Distributionfunction::get_y() const{
         default:
             std::cerr << "Distributionfunction_Wrong_Dimension: " << dimension << std::endl;
     }
+    if(abs(_g_sigma)>0.0000001)
+        result=g_broaden(result);
     return std::move(result);
 }
 const std::vector<long long>& Distributionfunction::get_ycount() const{
@@ -52,6 +54,19 @@ void Distributionfunction::D3_y(std::vector<double>& result) const{
     for(auto it=yresult.cbegin(); it!=yresult.cend(); ++it,r+=step_length){
         result.push_back((*it)*normalize/data_count/(4*PI*(pow(r+step_length,3)-pow(r,3))/3));
     }
+}
+std::vector<double> Distributionfunction::g_broaden(const std::vector<double>& in) const{
+    int l=in.size();
+    double dx=step_length/_g_sigma;
+    double con=1/sqrt(2*PI)*dx;
+    std::vector<double> gd,result(l,0);
+    for(int i=-(l-1);i<l;++i)
+        gd.push_back(con*exp(-dx*i*dx*i/2));
+    for(int i=0;i<l;++i){
+        for(int j=0;j<l;++j)
+            result[i] += (in[j]*gd[l-1+i-j]);
+    }
+    return result;
 }
 
 std::vector<double> Distributionfunction2D::get_x1() const{

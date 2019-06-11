@@ -1,128 +1,98 @@
 #ifndef CELL_H
 #define CELL_H
 
-#include "Box.h"
-#include "Position.h"
-#include "Physics_unit.h"
+#include <fstream>
+#include <iostream>
+#include <memory>
+#include <vector>
+#include <map>
+#include <unordered_map>
+#include <utility> // pair
+#include <cstdint>
 
-#include <vector> // std::vector
-#include <string> // std::string
-#include <iostream> // std::istream
-#include <sstream> // std::ostringstream
+#include "Cell_position.h"
+#include "Molecule.h"
 
-namespace Cell_space {
-    
-    //  typically box_parameters stored in Angstrom and positions in fractional
-    //  periodical boundary condition
-    //  have interface with
-    //      position
-    //      Eigen::Matrix<double,1,3,Eigen::RowMajor>
-    //      vector<double>(3) // not support yet
-    //      all treated as fractional
-    struct Cell{
-      
-        typedef Eigen::Matrix<double,1,3,Eigen::RowMajor> pos_type;
-        
-        Box cellp;
-        Positions atoms,wanniers;
+class cell;
 
-        // Cell information
-        int cell_type;
-        int snapshot;
-        double time;
-        
-        // atom data
-        int na = -1; // num of total atoms
-        std::vector<int> types_index; //type along the pos vector
-        std::vector<std::string> types;
-        std::vector<std::string> type_list; //list of types
-        std::vector<int> number_list;
-        std::vector<double> mass_list;
-        
-        //IO methods
-        
-        // read in .cel file
-        void read_cel(std::istream&);
-        void skip_cel(std::istream&) const;
-        // read in .pos file and keep cart()
-        void read_pos(std::istream&);
-        void skip_pos(std::istream&) const;
-        
-        // read in .xyz file and returns the comment line
-        std::string read_xyz(std::istream&,double in_unit=1);
-        void skip_xyz(std::istream&) const;
-        
-    //wrappers for Box functions
-        double volume() const{return cellp.volume();}
-        //  operations on positions
-        const pos_type to_cart(const pos_type& ip) const{return cellp.to_cart(ip);}
-        const pos_type to_frac(const pos_type& ip) const{return cellp.to_frac(ip);}
-        double distance(const pos_type& ip1,const pos_type& ip2) const{return cellp.distance(ip1,ip2);}
-        double angle(const pos_type& ip1,const pos_type& ip2,const pos_type& ip3) const{return cellp.angle(ip1,ip2,ip3);}
-        double fdistance(const pos_type& ip1,const pos_type& ip2) const{return cellp.fdistance(ip1,ip2);}
-        double fangle(const pos_type& ip1,const pos_type& ip2,const pos_type& ip3) const{return cellp.fangle(ip1,ip2,ip3);}
-        // operations on atoms
-        double atom_distance(int i,int j) const{return cellp.distance(atom(i),atom(j));}
-        double adistance(int i,int j) const{return cellp.distance(atom(i),atom(j));}
-        double atom_angle(int i,int j,int k) const{return cellp.angle(atom(i),atom(j),atom(k));}
-        double aangle(int i,int j,int k) const{return cellp.angle(atom(i),atom(j),atom(k));}
-        void atom_frac(){atoms.frac(cellp);}
-        void afrac(){atoms.frac(cellp);}
-        void atom_cart(){atoms.cart(cellp);}
-        void acart(){atoms.cart(cellp);}
-        
-        
-        
-    //atoms functions
-    //wrappers for atoms functions
-        template<typename... Ts>
-        auto atom(Ts&&... ts) const -> const decltype(atoms.row(std::forward<Ts>(ts)...)){
-            return atoms.row(std::forward<Ts>(ts)...);
-        }
+class cell{
     
-    //wrappers for wanniers functions
-        template<typename... Ts>
-        auto wannier(Ts&&... ts) const -> const decltype(wanniers.row(std::forward<Ts>(ts)...)){
-            return wanniers.row(std::forward<Ts>(ts)...);
-        }
-    };
+protected:
+    double time = -1;
+    int snapshot = -1;
+    std::shared_ptr<box> box_ptr;
+    std::vector<std::shared_ptr<position> > atoms_ptrv;
+    std::vector<std::shared_ptr<position> > wans_ptrv;
+    std::map<std::string,std::vector<std::shared_ptr<molecule> > > mols_ptrv;
     
-    struct Cell_qecp: public Cell{
-        //cellp
-        void read_cellp(std::istream& is){read_cel(is);}
-        void skip_cellp(std::istream& is) const{skip_cel(is);}
-        //atoms
-        void read_atoms(std::istream& is){read_pos(is);}
-        void skip_atoms(std::istream& is) const{skip_pos(is);}
-        //all
-        void read(std::istream& is1,std::istream& is2){
-            read_cellp(is1);
-            read_atoms(is2);
-            afrac();
-        }
-        void skip(std::istream& is1,std::istream& is2) const {
-            skip_cellp(is1);
-            skip_atoms(is2);
-        }
-    };
+    std::unordered_map<std::uintptr_t,double> _atoms_dis;
+
+public:
     
-    struct Cell_ipi: public Cell{
-        //cellp
-        void read_cellp1(std::istream&,double in_unit=1);
-        void skip_cellp1(std::istream&){}
-        void read_cellp1(std::string in_string,double in_unit=1){std::istringstream is_com(in_string);read_cellp1(is_com,in_unit);}
-        void skip_cellp1(std::string){}
-        //atoms
-        void read_atoms(std::istream& is,double in_unit=1){read_xyz(is,in_unit);}
-        void skip_atoms(std::istream& is) const{skip_xyz(is);}
-        //all
-        void read(std::istream& is1){
-            std::istringstream is_com(read_xyz(is1,l_bohr));
-            read_cellp1(is_com,l_bohr);
-            afrac();
-        }
-    };
+    std::shared_ptr<box>& boxp(){return box_ptr;}
+    std::vector<std::shared_ptr<position> >& atoms(){return atoms_ptrv;}
+    std::vector<std::shared_ptr<position> >& wans(){return wans_ptrv;}
+    std::map<std::string,std::vector<std::shared_ptr<molecule> > >& mols(){return mols_ptrv;}
+    std::vector<std::shared_ptr<molecule> >& mols(std::string mol_name){return mols_ptrv[mol_name];}
     
-}
-using namespace Cell_space;
+    virtual void set_box(double a,double b,double c){
+        box_ptr = std::make_shared<box>(Matrix3<double>(a,0,0,0,b,0,0,0,c));
+    }
+    virtual void clear(){
+        atoms_ptrv.clear();
+        wans_ptrv.clear();
+        mols_ptrv.clear();
+    }
+    double volume() const{
+        return box_ptr->volume();
+    }
+    int ss() const{
+        return snapshot;
+    }
+    
+    //IO
+    
+    virtual std::istream& read(std::istream& is){std::cerr << "read not implement"; return is;}
+    virtual std::istream& read_box(std::istream& is){std::cerr << "read_box not implement"; return is;}
+    virtual std::istream& read_atoms(std::istream& is){std::cerr << "read_atoms not implement"; return is;}
+    virtual std::istream& read_wans(std::istream& is){std::cerr << "read_wans not implement"; return is;}
+    virtual std::istream& skip(std::istream& is){std::cerr << "read not implement"; return is;}
+    virtual std::istream& skip_box(std::istream& is){std::cerr << "read_box not implement"; return is;}
+    virtual std::istream& skip_atoms(std::istream& is){std::cerr << "read_atoms not implement"; return is;}
+    virtual std::istream& skip_wans(std::istream& is){std::cerr << "read_wans not implement"; return is;}
+    virtual std::ostream& write(std::ostream& os){std::cerr << "write not implement"; return os;}
+    virtual std::ostream& write_box(std::ostream& os){box_ptr->write(os); return os;}
+    virtual std::ostream& write_atoms(std::ostream& os){
+        for(const auto& ap : atoms_ptrv){
+            ap->write(os) << std::endl;
+        }
+        return os;}
+    virtual std::ostream& write_atoms_frac(std::ostream& os){
+        for(const auto& ap : atoms_ptrv){
+            ap->write_frac(os) << std::endl;
+        }
+        return os;}
+    virtual std::ostream& write_atoms_cart(std::ostream& os){
+        for(const auto& ap : atoms_ptrv){
+            ap->write_cart(os) << std::endl;
+        }
+        return os;}
+    virtual std::ostream& write_wans(std::ostream& os){std::cerr << "write not implement"; return os;}
+    
+    //fast pair distance calculations
+    void cal_atoms_pair_dis(){
+        for(auto it=atoms_ptrv.cbegin();it!=atoms_ptrv.cend();++it)
+            for(auto it2=it;it2!=atoms_ptrv.cend();++it2)
+                _insert_pair_dis(*it,*it2,_atoms_dis);
+    }
+    double atoms_dis(const std::shared_ptr<position>& p1,const std::shared_ptr<position>& p2){
+        return _atoms_dis.at(reinterpret_cast<std::uintptr_t>(p1.get())*reinterpret_cast<std::uintptr_t>(p2.get()));
+    }
+    
+private:
+    void _insert_pair_dis(const std::shared_ptr<position>& p1,const std::shared_ptr<position>& p2, std::unordered_map<std::uintptr_t,double>& in_map){
+        in_map.insert(std::make_pair(reinterpret_cast<std::uintptr_t>(p1.get())*reinterpret_cast<std::uintptr_t>(p2.get()),p1->distance(*p2)));
+    }
+};
+
 #endif

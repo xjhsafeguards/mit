@@ -17,11 +17,13 @@ class Distributionfunction{
     long long data_count = 0;
     int dimension = 1;
     double normalize = 1;
+    // add gausian broad parameters
+    double _g_sigma;  // as the same unit of step
     
     std::vector<long long> yresult;
     
 public:
-    Distributionfunction(double in_lower=0, double in_upper=1, int in_steps=100): lower(in_lower), upper(in_upper), steps(in_steps){
+    Distributionfunction(double in_lower=0, double in_upper=1, int in_steps=100, double in_sig=0): lower(in_lower), upper(in_upper), steps(in_steps),_g_sigma(in_sig){
         set_step_length();
     }
     ~Distributionfunction(){};
@@ -36,6 +38,9 @@ public:
     inline void set_dimension(int in_D);
     //set normalized coefficient for y
     inline void set_normalize(double in_norm);
+    //set gausian broadening
+    inline void set_sigma(double in_sig);
+    inline void set_step_sigma(double in_sig);
     
     //read in data to calculate
     void read(const std::vector<double> & data_in);
@@ -71,6 +76,7 @@ private:
     }
     void D1_y(std::vector<double>& result) const;
     void D3_y(std::vector<double>& result) const;
+    std::vector<double> g_broaden(const std::vector<double>& in) const;
 };
 
 class Distributionfunction2D{
@@ -254,6 +260,12 @@ inline void Distributionfunction::set_dimension(int in_D){
 }
 inline void Distributionfunction::set_normalize(double in_norm){
     normalize = in_norm;
+}
+inline void Distributionfunction::set_sigma(double in_sig){
+    _g_sigma=in_sig;
+}
+inline void Distributionfunction::set_step_sigma(double in_sig){
+    _g_sigma=in_sig*step_length;
 }
 inline void Distributionfunction::reset(){
     reset_yresult();
