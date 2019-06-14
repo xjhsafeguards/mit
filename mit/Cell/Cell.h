@@ -23,8 +23,9 @@ protected:
     std::shared_ptr<box> box_ptr;
     std::vector<std::shared_ptr<position> > atoms_ptrv;
     std::vector<std::shared_ptr<position> > wans_ptrv;
-    std::map<std::string,std::vector<std::shared_ptr<molecule> > > mols_ptrv;
     
+    std::map<std::string,std::vector<std::shared_ptr<molecule> > > mols_ptrv;
+    std::unordered_map<std::string,std::vector<std::shared_ptr<position> > > _type_atoms_ptrv;
     std::unordered_map<std::uintptr_t,double> _atoms_dis;
 
 public:
@@ -48,6 +49,25 @@ public:
     }
     int ss() const{
         return snapshot;
+    }
+    
+    //type dependent calculations
+    void sort_type(){
+        for(const auto& atom : atoms_ptrv){
+            _type_atoms_ptrv[atom->type()].push_back(atom);
+        }
+    }
+    std::vector<std::shared_ptr<position> >& atom_type(const std::string& in_type){
+        return _type_atoms_ptrv.at(in_type);
+    }
+    //fast pair distance calculations (slow currently)
+    void cal_atoms_pair_dis(){
+        for(auto it=atoms_ptrv.cbegin();it!=atoms_ptrv.cend();++it)
+            for(auto it2=it;it2!=atoms_ptrv.cend();++it2)
+                _insert_pair_dis(*it,*it2,_atoms_dis);
+    }
+    double atoms_dis(const std::shared_ptr<position>& p1,const std::shared_ptr<position>& p2){
+        return _atoms_dis.at(reinterpret_cast<std::uintptr_t>(p1.get())*reinterpret_cast<std::uintptr_t>(p2.get()));
     }
     
     //IO
@@ -78,16 +98,6 @@ public:
         }
         return os;}
     virtual std::ostream& write_wans(std::ostream& os){std::cerr << "write not implement"; return os;}
-    
-    //fast pair distance calculations
-    void cal_atoms_pair_dis(){
-        for(auto it=atoms_ptrv.cbegin();it!=atoms_ptrv.cend();++it)
-            for(auto it2=it;it2!=atoms_ptrv.cend();++it2)
-                _insert_pair_dis(*it,*it2,_atoms_dis);
-    }
-    double atoms_dis(const std::shared_ptr<position>& p1,const std::shared_ptr<position>& p2){
-        return _atoms_dis.at(reinterpret_cast<std::uintptr_t>(p1.get())*reinterpret_cast<std::uintptr_t>(p2.get()));
-    }
     
 private:
     void _insert_pair_dis(const std::shared_ptr<position>& p1,const std::shared_ptr<position>& p2, std::unordered_map<std::uintptr_t,double>& in_map){

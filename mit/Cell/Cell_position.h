@@ -84,7 +84,7 @@ public:
 
     //constructor
     position(){};
-    position(const data_type& in_p,const box_ptr& in_b,const std::string& in_type="", int in_label=-1): pos(in_p),boxp(in_b),type(in_type),label(in_label){}
+    position(const data_type& in_p,const box_ptr& in_b,const std::string& in_type="", int in_label=-1): pos(in_p),boxp(in_b),_type(in_type),label(in_label){}
     position(const position&) = default;
     position(position&&) = default;
     position& operator=(const position&) = default;
@@ -102,11 +102,11 @@ public:
     inline void set_label(const label_type& in_label);
     inline void set_unit(double in_unit);
     
-    //check_type
+    //type
     inline bool check_type(const std::string& in_type) const;
-    
-    //get
     inline const type_type& get_type() const;
+    inline bool type(const std::string& in_type) const{return check_type(in_type);}
+    inline const type_type& type() const{return get_type();}
     
     //output position in fraction or cartesian
     virtual data_type frac() const = 0;
@@ -138,7 +138,7 @@ public:
     }
     
 protected:
-    type_type type;
+    type_type _type;
     label_type label;
     data_type pos;
     box_ptr boxp;
@@ -225,10 +225,10 @@ inline void position::set_position(std::istream& is){
     is >> pos;
 }
 inline void position::set_type(const type_type& in_type){
-    type = in_type;
+    _type = in_type;
 }
 inline void position::set_type(std::istream& is){
-    is >> type;
+    is >> _type;
 }
 inline void position::set_label(const label_type& in_label){
     label = in_label;
@@ -239,11 +239,11 @@ inline void position::set_unit(double in_unit){
 
 //check_type
 inline bool position::check_type(const std::string& in_type) const{
-    return in_type == type;
+    return in_type == _type;
 }
 
 inline const std::string& position::get_type() const{
-    return type;
+    return _type;
 }
 
 
