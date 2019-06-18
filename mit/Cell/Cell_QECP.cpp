@@ -32,3 +32,30 @@ std::istream& cell_qecp::read_atoms(std::istream& is){
     //std::cout << "check0: " << atoms_ptrv.size() << std::endl;
     return is;
 }
+
+std::istream& cell_qecp::skip_box(std::istream& is){
+    is >> snapshot >> time;
+    is.ignore(1000,'\n');
+    for(int i=0;i<3;++i)
+        is.ignore(1000,'\n');
+    return is;
+}
+
+std::istream& cell_qecp::skip_atoms(std::istream& is){
+    if(snapshot==-1){
+        is >> snapshot >> time;
+    }
+    else{
+        double tmps,tmpt;
+        is >> tmps >> tmpt;
+        assert(snapshot==tmps);
+        assert(time==tmpt);
+    }
+    is.ignore(1000,'\n');
+    for(int i=0;i<na.size();++i){
+        for(int j=0; j!=na[i]; ++j){
+            is.ignore(1000,'\n');
+        }
+    }
+    return is;
+}

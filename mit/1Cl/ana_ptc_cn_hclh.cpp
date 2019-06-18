@@ -1,6 +1,7 @@
 #include <iomanip>
 #include <chrono>
 #include <cstring>
+#include <numeric> //std::accumulate
 
 #include "Math_all.h"
 #include "Cell.h"
@@ -37,6 +38,7 @@ int main(int argc,char** argv){
     double OO_cutoff = 3.35;
     double PTC_cutoff_up = -1;
     double PTC_cutoff_down = -1.2;
+    double PTC_HB = -2;
     int DF_step = 500;
     double DF_sigma = 0;
 #ifdef QUANT
@@ -54,6 +56,7 @@ int main(int argc,char** argv){
     Help_content += "-dfsg for set the gausian sigma (in unit of step) of distribution functions calculations\n";
     Help_content += "-dptcu for set upper limit of PTC\n";
     Help_content += "-dptcd for set lower limit of PTC\n";
+    Help_content += "-dptchb for set lower limit of PTC treated as hbed\n";
     
     if(argc != 1)
     {
@@ -71,6 +74,7 @@ int main(int argc,char** argv){
             else if(strncmp(argv[i],"-dfsg",5) == 0){string tmp=argv[++i];DF_sigma=stod(tmp);}
             else if(strncmp(argv[i],"-dptcu",6) == 0){string tmp=argv[++i];PTC_cutoff_up=stod(tmp);}
             else if(strncmp(argv[i],"-dptcd",6) == 0){string tmp=argv[++i];PTC_cutoff_down=stod(tmp);}
+            else if(strncmp(argv[i],"-dptchb",7) == 0){string tmp=argv[++i];PTC_HB=stod(tmp);}
             else if(strncmp(argv[i],"-h",2) == 0){cout << Help_content << endl; return 1;}
             else{cout << "Read in Unknow tag " << argv[i] << endl;}
         }
@@ -97,7 +101,11 @@ int main(int argc,char** argv){
     }
     Distributionfunction Dp_one(0,180,DF_step); //HClH of atoms only with required PTC
     Distributionfunction Dp_both(0,180,DF_step); //HClH of atoms both have required PTC
-    Distributionfunction Dp(0,180,DF_step);
+    Distributionfunction Dp(0,180,DF_step); // normal HClH
+    auto Dp_avgptc = new Distributionfunction2D(-OCl_cutoff,0,500,-0.5,14.5,15);
+    auto Dp_ptc = new Distributionfunction2D(-OCl_cutoff,0,500,-0.5,14.5,15);
+    auto Dp_avghbptc = new Distributionfunction2D(-OCl_cutoff,0,500,-0.5,14.5,15);
+    auto Dp_hbptc = new Distributionfunction2D(-OCl_cutoff,0,500,-0.5,14.5,15);
     molecule_manip* water = new water_manip();
     
 #ifdef QUANT
@@ -107,88 +115,122 @@ int main(int argc,char** argv){
         //molecule_manip* water = new water_manip();
         
         for(int i=0;i!=f_end;++i){
-            GTIMER.start("Read Cell");
             std::shared_ptr<cell> cel = make_shared<cell_ipi>();
-            cel->read(ifs);
-            GTIMER.stop("Read Cell");
-#else
-            ifstream ifs1(file_folder+"/cl.cel");
-            ifstream ifs2(file_folder+"/cl.pos");
-            
-            for(int i=0;i!=f_end;++i){
-                
-                std::shared_ptr<cell> cel = make_shared<cell_qecp>(cell_qecp({1,63,126},{"Cl","O","H"}));
+            if(i>=f_start and (i-f_start)%f_step == 0){
                 GTIMER.start("Read Cell");
-                cel->read_box(ifs1);
-                cel->read_atoms(ifs2);
+                cel->read(ifs);
                 GTIMER.stop("Read Cell");
-#endif
-                GTIMER.start("Read Water");
-                water->read(*cel);
-                GTIMER.stop("Read Water");
-                
-                int CNcount = 0,CNHcount = 0,nPTC = 0;
-                vector<double>  HClH;
-                vector<shared_ptr<position> > Hs_in_Cl,Hs_with_ptc;
-                
-                GTIMER.start("Read HClH");
-                for(int i=64;i<190;++i){
-                    bool is_in=false;
-                    double dHCl = cel->atoms()[0]->distance(*cel->atoms()[i]);
-                    if( dHCl<HCl_cutoff){
-                        Hs_in_Cl.push_back(cel->atoms()[i]);
-                        ++CNHcount;
-                    }
-                }
-                for(const auto& mol : cel->mols("H2O")){
-                    //assert(mol->atoms().size()==3);
-                    double OCl = mol->atoms()[0]->distance(*(cel->atoms()[0]));
-                    if ( OCl < OCl_cutoff){
-                        ++CNcount;
-                        double OH1 = mol->atoms()[1]->distance(*(mol->atoms()[0]));
-                        double OH2 = mol->atoms()[2]->distance(*(mol->atoms()[0]));
-                        double HCl1 = mol->atoms()[1]->distance(*(cel->atoms()[0]));
-                        double HCl2 = mol->atoms()[2]->distance(*(cel->atoms()[0]));
-                        double PTC1 = OH1 - HCl1;
-                        double PTC2 = OH2 - HCl2;
-                        if(PTC1 < PTC_cutoff_up and PTC1 > PTC_cutoff_down){
-                            Hs_with_ptc.push_back(mol->atoms()[1]);
-                            ++nPTC;
-                        }
-                        if(PTC2 < PTC_cutoff_up and PTC2 > PTC_cutoff_down){
-                            Hs_with_ptc.push_back(mol->atoms()[2]);
-                            ++nPTC;
-                        }
-                    }
-                }
-                for( const auto& atom1: Hs_in_Cl){
-                    for( const auto& atom2: Hs_in_Cl)
-                        if(atom1!=atom2)
-                            HClH.push_back(cel->atoms()[0]->angle(*atom1,*atom2)); // HClH
-                    for( const auto& atom2: Hs_with_ptc)
-                        if(atom1!=atom2)
-                            Dp_one.read(cel->atoms()[0]->angle(*atom1,*atom2)); // HClH
-                }
-                for( const auto& atom1: Hs_with_ptc)
-                    for( const auto& atom2: Hs_with_ptc)
-                        if(atom1!=atom2)
-                            Dp_both.read(cel->atoms()[0]->angle(*atom1,*atom2)); // HClH
-                
-                Dp_nH[CNHcount]->read(HClH);
-                Dp_nPTC[nPTC]->read(HClH);
-                Dp_nO[CNcount]->read(HClH);
-                Dp.read(HClH);
-                GTIMER.stop("Read HClH");
-                GTIMER.start("Print");
-#ifdef QUANT
-                cout << "read bead" << fc << " snapshot " << i << '\r' << flush;
-                GTIMER.stop("Print");
-            }
-        }
 #else
-        
-        cout << "read snapshot " << i << '\r' << flush;
-        GTIMER.stop("Print");
+                ifstream ifs1(file_folder+"/cl.cel");
+                ifstream ifs2(file_folder+"/cl.pos");
+                
+                for(int i=0;i!=f_end;++i){
+                    std::shared_ptr<cell> cel = make_shared<cell_qecp>(cell_qecp({1,63,126},{"Cl","O","H"}));
+                    if(i>=f_start and (i-f_start)%f_step == 0){
+                        GTIMER.start("Read Cell");
+                        cel->read_box(ifs1);
+                        cel->read_atoms(ifs2);
+                        GTIMER.stop("Read Cell");
+#endif
+                        GTIMER.start("Read Water");
+                        water->read(*cel);
+                        GTIMER.stop("Read Water");
+                        
+                        int CNcount = 0,CNHcount = 0,nPTC = 0;
+                        vector<double>  HClH,PTC,HBPTC;
+                        vector<shared_ptr<position> > Hs_in_Cl,Hs_with_ptc;
+                        
+                        GTIMER.start("Read HClH");
+                        for(int i=64;i<190;++i){
+                            bool is_in=false;
+                            double dHCl = cel->atoms()[0]->distance(*cel->atoms()[i]);
+                            if( dHCl<HCl_cutoff){
+                                Hs_in_Cl.push_back(cel->atoms()[i]);
+                                ++CNHcount;
+                            }
+                        }
+                        for(const auto& mol : cel->mols("H2O")){
+                            //assert(mol->atoms().size()==3);
+                            double OCl = mol->atoms()[0]->distance(*(cel->atoms()[0]));
+                            if ( OCl < OCl_cutoff){
+                                ++CNcount;
+                                double OH1 = mol->atoms()[1]->distance(*(mol->atoms()[0]));
+                                double OH2 = mol->atoms()[2]->distance(*(mol->atoms()[0]));
+                                double HCl1 = mol->atoms()[1]->distance(*(cel->atoms()[0]));
+                                double HCl2 = mol->atoms()[2]->distance(*(cel->atoms()[0]));
+                                double PTC1 = OH1 - HCl1;
+                                double PTC2 = OH2 - HCl2;
+                                PTC.push_back(PTC1);
+                                PTC.push_back(PTC2);
+                                if(PTC1 > PTC_HB){
+                                    HBPTC.push_back(PTC1);
+                                }
+                                if(PTC2 > PTC_HB){
+                                    HBPTC.push_back(PTC2);
+                                }
+                                if(PTC1 < PTC_cutoff_up and PTC1 > PTC_cutoff_down){
+                                    Hs_with_ptc.push_back(mol->atoms()[1]);
+                                    ++nPTC;
+                                }
+                                if(PTC2 < PTC_cutoff_up and PTC2 > PTC_cutoff_down){
+                                    Hs_with_ptc.push_back(mol->atoms()[2]);
+                                    ++nPTC;
+                                }
+                            }
+                        }
+                        for( const auto& atom1: Hs_in_Cl){
+                            for( const auto& atom2: Hs_in_Cl)
+                                if(atom1!=atom2)
+                                    HClH.push_back(cel->atoms()[0]->angle(*atom1,*atom2)); // HClH
+                            for( const auto& atom2: Hs_with_ptc)
+                                if(atom1!=atom2)
+                                    Dp_one.read(cel->atoms()[0]->angle(*atom1,*atom2)); // HClH
+                        }
+                        for( const auto& atom1: Hs_with_ptc)
+                            for( const auto& atom2: Hs_with_ptc)
+                                if(atom1!=atom2)
+                                    Dp_both.read(cel->atoms()[0]->angle(*atom1,*atom2)); // HClH
+                        
+                        Dp_nH[CNHcount]->read(HClH);
+                        Dp_nPTC[nPTC]->read(HClH);
+                        Dp_nO[CNcount]->read(HClH);
+                        Dp.read(HClH);
+                        for(const auto& p : PTC)
+                            Dp_ptc->read(p,CNcount);
+                        Dp_avgptc->read(accumulate(PTC.cbegin(),PTC.cend(),0.0)/PTC.size(),CNcount);
+                        for(const auto& p : HBPTC)
+                            Dp_hbptc->read(p,CNcount);
+                        Dp_avghbptc->read(accumulate(HBPTC.cbegin(),HBPTC.cend(),0.0)/HBPTC.size(),CNcount);
+                        GTIMER.stop("Read HClH");
+                        GTIMER.start("Print");
+#ifdef QUANT
+                        cout << "read bead" << fc << " snapshot " << i << '\r' << flush;
+                        GTIMER.stop("Print");
+                    }
+                    else{
+                        GTIMER.start("Read Cell");
+                        cel->skip(ifs);
+                        GTIMER.stop("Read Cell");
+                        GTIMER.start("Print");
+                        cout << "skip bead" << fc << " snapshot " << i << '\r' << flush;
+                        GTIMER.stop("Print");
+                    }
+                }
+            }
+#else
+            
+            cout << "read snapshot " << i << '\r' << flush;
+            GTIMER.stop("Print");
+        }
+        else{
+            GTIMER.start("Read Cell");
+            cel->skip_box(ifs1);
+            cel->skip_atoms(ifs2);
+            GTIMER.stop("Read Cell");
+            GTIMER.start("Print");
+            cout << "skip snapshot " << i << '\r' << flush;
+            GTIMER.stop("Print");
+        }
     }
 #endif
     
@@ -263,10 +305,24 @@ int main(int argc,char** argv){
             ofs << '\n';
         }
     }
+    {// Print ptc cn
+        ofstream ofs("ptc_cn.txt");
+        ofs << setprecision(10);
+        ofs << "#" << setw(19) << "PTC" << setw(20) << "CN" << setw(20) << "Count_avg" <<  setw(20) << "Count_each" << setw(20) << "Count_avg(HBed)" <<  setw(20) << "Count_each(HBed)" << endl;
+        
+        auto X1=Dp_avgptc->get_x1();
+        auto X2=Dp_avgptc->get_x2();
+        auto Y=Dp_avgptc->get_y();
+        auto Y2=Dp_ptc->get_y();
+        auto Y3=Dp_avghbptc->get_y();
+        auto Y4=Dp_hbptc->get_y();
+        for(int i=0; i<X1.size(); ++i){
+            for(int j=0; j<X2.size(); ++j)
+            {
+                ofs << setw(20) << X1[i] << setw(20) << X2[j] << setw(20) << Y[i][j] << setw(20) << Y2[i][j] << setw(20) << Y3[i][j] << setw(20) << Y4[i][j] << endl;
+            }
+        }
+    }
     GTIMER.stop("all");
     GTIMER.summerize(cout);
 }
-
-
-
-

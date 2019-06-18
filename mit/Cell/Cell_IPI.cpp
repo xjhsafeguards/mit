@@ -29,6 +29,15 @@ std::istream& cell_ipi::read(std::istream& is){
     return is;
 }
 
+std::istream& cell_ipi::skip(std::istream& is){
+    int line_count;
+    is >> line_count;
+    line_count += 2;
+    for(int i=0;i<line_count;++i)
+        is.ignore(1000,'\n');
+    return is;
+}
+
 //std::ostream& cell_ipi::write(std::ostream& os){
 //    return os;
 //}

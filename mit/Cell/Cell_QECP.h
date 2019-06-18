@@ -20,6 +20,8 @@ public:
     
     virtual std::istream& read_box(std::istream&);
     virtual std::istream& read_atoms(std::istream&);
+    virtual std::istream& skip_box(std::istream&);
+    virtual std::istream& skip_atoms(std::istream&);
 };
 
 #endif
