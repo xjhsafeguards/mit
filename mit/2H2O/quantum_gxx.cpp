@@ -90,7 +90,8 @@ int main(int argc,char** argv){
                         for( const auto& atom2: cel->atoms()){
                             if(atom2->check_type("O")){
                                 data[0].push_back(atom1->distance(*atom2));
-                                if(atom1!=atom2 and atom1->distance(*atom2)<OO_cutoff){
+                                /*
+				if(atom1!=atom2 and atom1->distance(*atom2)<OO_cutoff){
                                     //time consuming 
 				    for( const auto& atom3: cel->atoms()){
                                         if(atom1!=atom3 and atom2!=atom3 and atom1->distance(*atom3)<OO_cutoff){
@@ -98,7 +99,7 @@ int main(int argc,char** argv){
                                    	    // cout << "test2" << endl;        
                                         }
                                     }
-                                }
+                                }*/
                             }
                             if(atom2->check_type("H"))
                                 data[1].push_back(atom1->distance(*atom2));
