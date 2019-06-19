@@ -8,6 +8,7 @@
 #include "Cell_TEMP.h"
 #include "Cell_QECP.h"
 #include "Cell_IPI.h"
+#include "Cell_Lammps.h"
 #include "Molecule_water.h"
 
 using namespace std;
@@ -70,59 +71,57 @@ int main(int argc,char** argv){
         Dp[i] = new Distributionfunction(0,180,500);
     }
     
-    //cout << "test1" << endl;   
- 
-    for(int fc=0; fc!=8;++fc){
+    //cout << "test1" << endl;
     
-        ifstream ifs( file_folder + "/data.pos_"+ to_string(fc) + ".xyz");
-        //molecule_manip* water = new water_manip();
+    
+    ifstream ifs( file_folder );
+    //molecule_manip* water = new water_manip();
+    
+    for(int i=0;i!=f_end;++i){
         
-        for(int i=0;i!=f_end;++i){
-            
-            std::shared_ptr<cell> cel = make_shared<cell_ipi>();
-            cel->read(ifs);
-            vector<vector<double>> data(4); // OO, OH, HH, OOO,
-            //cout << "test1" << endl; 
-            if(i>f_start and (i-f_start)%f_step == 0){
-                
-                for( const auto& atom1: cel->atoms()){
-                    if(atom1->check_type("O"))
-                        for( const auto& atom2: cel->atoms()){
-                            if(atom2->check_type("O")){
-                                data[0].push_back(atom1->distance(*atom2));
-                                if(atom1!=atom2 and atom1->distance(*atom2)<OO_cutoff){
-                                    //time consuming 
-				    for( const auto& atom3: cel->atoms()){
-                                        if(atom1!=atom3 and atom2!=atom3 and atom1->distance(*atom3)<OO_cutoff){
-                                            data[3].push_back(atom1->angle(*atom2,*atom3));
-                                   	    // cout << "test2" << endl;        
-                                        }
+        std::shared_ptr<cell> cel = make_shared<cell_lammps>(cell_lammps({"O","H"}));
+        cel->read(ifs);
+        vector<vector<double>> data(4); // OO, OH, HH, OOO,
+        //cout << "test1" << endl;
+        if(i>f_start and (i-f_start)%f_step == 0){
+            for( const auto& atom1: cel->atoms()){
+                if(atom1->check_type("O"))
+                    for( const auto& atom2: cel->atoms()){
+                        if(atom2->check_type("O")){
+                            data[0].push_back(atom1->distance(*atom2));
+                            /*
+                            if(atom1!=atom2 and atom1->distance(*atom2)<OO_cutoff){
+                                //time consuming
+                                for( const auto& atom3: cel->atoms()){
+                                    if(atom1!=atom3 and atom2!=atom3 and atom1->distance(*atom3)<OO_cutoff){
+                                        data[3].push_back(atom1->angle(*atom2,*atom3));
+                                        // cout << "test2" << endl;
                                     }
                                 }
-                            }
-                            if(atom2->check_type("H"))
-                                data[1].push_back(atom1->distance(*atom2));
+                            }*/
                         }
-                    if(atom1->check_type("H")){
-                        for( const auto& atom2: cel->atoms()){
-                            if(atom2->check_type("H")){
-                                data[2].push_back(atom1->distance(*atom2));
-                            }
-                        }
+                        if(atom2->check_type("H"))
+                            data[1].push_back(atom1->distance(*atom2));
                     }
-                    cell_vol +=  cel->volume();
-                    scount++;
-                    for(int i=0;i!=4;++i){
-                        //cout << data[i].size() << '\t';i
-                        //cout << "test3" << endl;
-                        Dp[i]->read(data[i]);
-                        //cout << Dp[i]->get_valid_count() << '\t';
+                if(atom1->check_type("H")){
+                    for( const auto& atom2: cel->atoms()){
+                        if(atom2->check_type("H")){
+                            data[2].push_back(atom1->distance(*atom2));
+                        }
                     }
                 }
-                cout << "read bead" << fc << " snapshot " << i << '\r' << flush;
-            }else{
-                cout << "skip bead" << fc << " snapshot " << i << '\r' << flush;
+                cell_vol +=  cel->volume();
+                scount++;
+                for(int i=0;i!=4;++i){
+                    //cout << data[i].size() << '\t';i
+                    //cout << "test3" << endl;
+                    Dp[i]->read(data[i]);
+                    //cout << Dp[i]->get_valid_count() << '\t';
+                }
             }
+            cout << "read snapshot " << i << '\r' << flush;
+        }else{
+            cout << "skip snapshot " << i << '\r' << flush;
         }
     }
     
@@ -153,7 +152,7 @@ int main(int argc,char** argv){
         }
         ofs << '\n';
     }
-
     
-
+    
+    
 }
