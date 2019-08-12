@@ -6,7 +6,7 @@ FOLDERS=Cell Math Physics Utilit #old-Cell
 CC=g++
 
 # Define and include flags
-DFLAGS= -DNDEBUG #-DQUANT 
+DFLAGS= -DNDEBUG -DQUANT 
 IFLAGS=-I$(TOPDIR)/eigen-eigen-323c052e1731/ $(patsubst %,-I$(TOPDIR)/mit/%,$(FOLDERS)) #-I$(TOPDIR)/mit/include/ 
 
 # C flags

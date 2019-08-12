@@ -33,8 +33,8 @@ int main(int argc,char** argv){
     int f_start = 0;
     int f_end = 10;
     int f_step = 1;
-    double OCl_cutoff = 3.8;
-    double HCl_cutoff = 2.9;
+    double OCl_cutoff = 3.83;
+    double HCl_cutoff = 2.87;
     double OO_cutoff = 3.35;
     double PTC_cutoff_up = -1;
     double PTC_cutoff_down = -1.2;
@@ -43,6 +43,7 @@ int main(int argc,char** argv){
     double DF_sigma = 0;
 #ifdef QUANT
     water_parameter::OH_distance=2.0;
+    OCl_cutoff = 3.90;
 #endif
     Help_content += "-p for set folder of position files\n";
     Help_content += "-fs for the fisrt snapshot to read\n";

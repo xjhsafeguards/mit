@@ -82,10 +82,12 @@ int main(int argc,char** argv){
     double cell_vol=0;
     int scount=0;
     
-    Distributionfunction* Dp[9]; // G of OH, OO, OCl, HCl, OClO, HClH, ClOO, OOO, OO(cl-bonded)O
-    for(int i=0;i!=4;++i){
-        Dp[i] = new Distributionfunction(0,6,DF_step);
+    //Distributionfunction* Dp[9]; // G of OH, OO, OCl, HCl, OClO, HClH, ClOO, OOO, OO(cl-bonded)O
+    Distributionfunction* Dp[11];
+    for(int i=0;i!=11;++i){
+        Dp[i] = new Distributionfunction(0,8,DF_step);
     }
+    /*
     for(int i=4;i!=9;++i){
         Dp[i] = new Distributionfunction(0,180,DF_step);
     }
@@ -96,6 +98,7 @@ int main(int argc,char** argv){
     Distributionfunction Dp_CNd(-7.5,7.5,15); // CN diff O-H
     vector<Stat_pool> ba(DF_step),bl(DF_step);
     double decay_step = (6.0-0)/DF_step;
+     */
     
     molecule_manip* water = new water_manip();
     
@@ -130,15 +133,16 @@ int main(int argc,char** argv){
                         // Reading GXX assuming all atoms are in 1cl 63O 126H
                         GTIMER.start("GXX");
                         vector<shared_ptr<position> > Os_in_Cl;
-                        vector<shared_ptr<position> > Hs_in_Cl;
+                        //vector<shared_ptr<position> > Hs_in_Cl;
                         for(int i=1;i<64;++i){
-                            bool is_in=false;
+                            //bool is_in=false;
                             double dOCl = cel->atoms()[0]->distance(*cel->atoms()[i]);
-                            Dp[2]->read(dOCl); // OCl
+                            //Dp[2]->read(dOCl); // OCl
                             if( dOCl<OCl_cutoff){
                                 Os_in_Cl.push_back(cel->atoms()[i]);
-                                is_in=true;
+                                //is_in=true;
                             }
+                            /*
                             vector<int> Oindex_in_Oi;
                             for(int j=1;j<64;++j){
                                 double dOO = cel->atoms()[i]->distance(*cel->atoms()[j]);
@@ -159,7 +163,17 @@ int main(int argc,char** argv){
                             }
                             for(int j=64;j<190;++j)
                                 Dp[0]->read(cel->atoms()[i]->distance(*cel->atoms()[j])); // OH
+                             */
                         }
+                        for(const auto& O1 :Os_in_Cl ){
+                            for(const auto& O2 :Os_in_Cl ){
+                                double dOO = O1->distance(*O2);
+                                Dp[0]->read(dOO);
+                                if(Os_in_Cl.size()<11)
+                                    Dp[Os_in_Cl.size()]->read(dOO);
+                            }
+                        }
+                        /*
                         for( const auto& atom1: Os_in_Cl){
                             for( const auto& atom2: Os_in_Cl){
                                 if(atom1!=atom2)// and atom1->distance(*atom2)<OO_cutoff
@@ -184,8 +198,10 @@ int main(int argc,char** argv){
                             for( const auto& atom2: Hs_in_Cl)
                                 if(atom1!=atom2)// and atom1->distance(*atom2)<OO_cutoff
                                     Dp[5]->read(cel->atoms()[0]->angle(*atom1,*atom2)); // HClH
+                             */
                         GTIMER.stop("GXX");
                         // Reading PTC
+                        /*
                         GTIMER.start("PTC");
                         for(const auto& mol : cel->mols("H2O")){
                             //assert(mol->atoms().size()==3);
@@ -221,6 +237,7 @@ int main(int argc,char** argv){
                         Dp_CN.read(CNcount);
                         Dp_CNH.read(CNHcount);
                         Dp_CNd.read(CNcount-CNHcount);
+                         */
                         cell_vol +=  cel->volume();
                         scount++;
                         //cout << endl;
@@ -260,30 +277,37 @@ int main(int argc,char** argv){
     cell_vol /= scount;
     { // print GXX
         vector<double> X=Dp[0]->get_x();
-        vector<double> Y[9];
-        for(int i=0;i!=4;++i){
-            Dp[i]->set_dimension(3);
-            Dp[i]->set_normalize(cell_vol);
-            Y[i] = Dp[i]->get_y();
-        }
-        for(int i=4;i!=9;++i){
+        vector<double> Y[11];
+        for(int i=0;i!=11;++i){
             //Dp[i]->set_dimension(3);
             //Dp[i]->set_normalize(cell_vol);
             Y[i] = Dp[i]->get_y();
         }
-        ofstream ofs("G_OH_OO_OCl_HCl.txt");
+        /*
+        for(int i=4;i!=9;++i){
+            //Dp[i]->set_dimension(3);
+            //Dp[i]->set_normalize(cell_vol);
+            Y[i] = Dp[i]->get_y();
+        }*/
+        //ofstream ofs("G_OH_OO_OCl_HCl.txt");
+        ofstream ofs("G_OO_in_shell_CN.txt");
         ofs << setprecision(10);
         
-        ofs << "#" << setw(19) << "R" << setw(20) << "OH" << setw(20) << "OO" << setw(20) << "OCl" << setw(20) << "HCl" << setw(20) << "OClO" << setw(20) << "HClH" << setw(20) << "ClOO" << setw(20) << "OOO" << setw(20) << "OO(cl-bonded)O" << endl ;
+        //ofs << "#" << setw(19) << "R" << setw(20) << "OH" << setw(20) << "OO" << setw(20) << "OCl" << setw(20) << "HCl" << setw(20) << "OClO" << setw(20) << "HClH" << setw(20) << "ClOO" << setw(20) << "OOO" << setw(20) << "OO(cl-bonded)O" << endl ;
+        ofs << "#" << setw(19) << "R" << setw(20) << "OO-all";
+        for(int i=1;i<11;++i)
+            ofs << setw(20) << "OO-CN" + to_string(i);
+        ofs << endl ;
         
         for(int i=0;i<X.size();++i){
             ofs << setw(20) << X[i];
-            for(int j=0;j!=9;++j){
+            for(int j=0;j!=11;++j){
                 ofs << setw(20) << Y[j][i];
             }
             ofs << '\n';
         }
     }
+    /*
     { // Print ptc
         ofstream ofs("ptc_cl_o.txt");
         ofs << setprecision(10);
@@ -399,6 +423,7 @@ int main(int argc,char** argv){
             ofs << '\n';
         }
     }
+     */
     GTIMER.stop("all");
     GTIMER.summerize(cout);
 }
