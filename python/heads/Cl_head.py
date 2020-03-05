@@ -240,3 +240,30 @@ class DFstat:
 
 def list_stat(li,info):
     print("{}:{:.3f}±{:.3f}".format(info,np.average(li),np.std(li)))
+
+
+def Poly_min_general(i = 2.5,j = 3.5,n = 0.005,DATA_x=np.asarray([]),DATA_y=np.asarray([]),show_graph=False,print_result=False,order=8):
+    cutoff_range = np.where((DATA_x>i)&(DATA_x<j))
+    DATA2 = np.poly1d(np.polyfit(DATA_x[cutoff_range],DATA_y[cutoff_range],order))
+    if(show_graph):
+        plt.plot(np.arange(i,j,n),DATA2(np.arange(i,j,n)))
+        plt.plot(DATA_x[cutoff_range],DATA_y[cutoff_range])
+    x = np.argmin(DATA2(np.arange(i,j,n)))
+    if(show_graph):
+        plt.axvline(np.arange(i,j,n)[x])
+    if(print_result):
+        print("Minimum at ",np.arange(i,j,n)[x],DATA2(np.arange(i,j,n))[x])
+    return np.arange(i,j,n)[x]
+
+def Poly_max_general(i = 2.5,j = 3.5,n = 0.005,DATA_x=np.asarray([]),DATA_y=np.asarray([]),show_graph=False,print_result=False,order=8):
+    cutoff_range = np.where((DATA_x>i)&(DATA_x<j))
+    DATA2 = np.poly1d(np.polyfit(DATA_x[cutoff_range],DATA_y[cutoff_range],order))
+    if(show_graph):
+        plt.plot(np.arange(i,j,n),DATA2(np.arange(i,j,n)))
+        plt.plot(DATA_x[cutoff_range],DATA_y[cutoff_range])
+    x = np.argmax(DATA2(np.arange(i,j,n)))
+    if(show_graph):
+        plt.axvline(np.arange(i,j,n)[x])
+    if(print_result):
+        print("Maximum at ",np.arange(i,j,n)[x],DATA2(np.arange(i,j,n))[x])
+    return np.arange(i,j,n)[x]
