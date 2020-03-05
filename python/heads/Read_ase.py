@@ -4,7 +4,9 @@ from ase.units import *
 import ase
 import pickle
 
-def readi_lammps_dump(in_file="water.dump",natom=384,symbols="O128H256",nstep=10,nstart=1000,save_dump=True,rowcell=5,rowpos=9):
+str2slice = lambda mystring: slice(*map(lambda x: int(x.strip()) if x.strip() else None, mystring.split(':')))
+
+def read_lammps_dump(in_file="water.dump",natom=384,symbols="O128H256",nstep=10,nstart=1000,save_dump=True,rowcell=5,rowpos=9):
     c = []
     dumpfile = open(in_file,"r")
     content  = dumpfile.readlines()
@@ -24,7 +26,7 @@ def readi_lammps_dump(in_file="water.dump",natom=384,symbols="O128H256",nstep=10
         pickle.dump(c,open(in_file+".save","wb"))
     return c
 
-def read_ipi_xyz(infile="./",step=":",nbeads=8,unit=Bohr,colcell=3,save_dump=True):
+def read_ipi_xyz(infile="./",step=":",nbeads=8,unit=Bohr,colcell=2,save_dump=True):
     tmpq = []
     for i in range(0,nbeads):
         #print("Reading", i)
@@ -32,10 +34,24 @@ def read_ipi_xyz(infile="./",step=":",nbeads=8,unit=Bohr,colcell=3,save_dump=Tru
     for beads in tmpq:
         for sn in beads:
             sn.set_pbc(111)
-            cel = list(sn.info)[colcell]*unit
+            #print(list(sn.info))
+            #print(float(list(sn.info)[colcell]))
+            cel = float(list(sn.info)[colcell])*unit
             sn.set_cell([cel,cel,cel])
             if(unit!=1):
                 sn.set_positions(sn.get_positions()*unit)
     if(save_dump):
         pickle.dump(tmpq,open("data.pos.save","wb"))
     return tmpq
+
+def read_dpmd_raw(infile="./",step=":",symbols="O64H128",unit=1,save_dump=True):
+    c = []
+    poss = np.loadtxt(infile+"coord.raw")
+    boxs = np.loadtxt(infile+"box.raw")
+
+    for pos,box in zip(poss[str2slice(step)],boxs[str2slice(step)]):
+        #print(pos,box)
+        c.append(ase.Atoms(symbols,cell=box.reshape(3,3)*unit,positions=pos.reshape(-1,3)*unit,pbc=(1,1,1)))
+    if(save_dump):
+        pickle.dump(c,open("raw.save","wb"))
+    return c
