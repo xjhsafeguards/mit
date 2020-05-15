@@ -161,7 +161,9 @@ class Cl_ana:
                 self.waters = np.vstack((np.unique(self.Os[Os]),self.Hs[Hs].reshape(self.Os.size,2).T)).T
             #if quantum case H fluctuation large use the closest two as H
             else:
-                self.waters = np.vstack((np.unique(self.Os[Os]),self.Hs[np.argsort(self.all_dist[self.Os][:,self.Hs],axis=1)[:,:2]].T)).T  
+                #self.waters = np.vstack((np.unique(self.Os[Os]),self.Hs[np.argsort(self.all_dist[self.Os][:,self.Hs],axis=1)[:,:2]].T)).T  
+                #Jianhang Changed 2020.03.05 
+                self.waters = np.vstack((self.Os,self.Hs[np.argsort(self.all_dist[self.Os][:,self.Hs],axis=1)[:,:2]].T)).T  
             return self.waters
     def get_waniers(self,default=True):
         if(self.waters is None):
