@@ -339,7 +339,7 @@ def water_ana2(sn,\
     
     dOH = (np.average(all_dist[waters[Os,0],waters[Os,2]])+np.average(all_dist[waters[Os,0],waters[Os,1]]))/2
     aHOH = np.average(sn.get_angles(np.vstack((waters[:,1],waters[:,0],waters[:,2])).T,mic=True))
-    dH_O = (np.average(all_dist[waters[HB1O1,1],waters[HB1O2,0]])+np.average(all_dist[waters[HB2O1,1],waters[HB2O2,0]]))/2
+    dH_O = (np.average(all_dist[waters[HB1O1,1],waters[HB1O2,0]])+np.average(all_dist[waters[HB2O1,2],waters[HB2O2,0]]))/2
 
     gOO = DF(DF_step,DF_range)
     gOO.read(all_dist[Os][:,Os])

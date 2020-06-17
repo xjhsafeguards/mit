@@ -126,7 +126,15 @@ class DF2D:
         #X, Y = np.meshgrid(self.xedges,self.yedges)
         #plt.contour(X,Y,self.df.T,**kwargs)
         plt.contour(self.df.T/self.df.sum(),extent=[self.xedges.min(),self.xedges.max(),self.yedges.min(),self.yedges.max()],**kwargs)
-        
+
+    def __iadd__(self,df2):
+        self.df+=df2.df
+        return self
+    def copy(self):
+        result = DF2D(self.steps,self.limits)
+        result.df = self.df.copy()
+        return result    
+    
 class Cl_ana:
     all_dist = None
     all_vdist = None
