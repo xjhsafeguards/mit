@@ -26,11 +26,11 @@ def read_lammps_dump(in_file="water.dump",natom=384,symbols="O128H256",nstep=10,
         pickle.dump(c,open(in_file+".save","wb"))
     return c
 
-def read_ipi_xyz(infile="./",step=":",nbeads=8,unit=Bohr,colcell=2,save_dump=True):
+def read_ipi_xyz(infile="./",step=":",nbeads=8,unit=Bohr,colcell=2,save_dump=True,zfilldig=1):
     tmpq = []
     for i in range(0,nbeads):
         #print("Reading", i)
-        tmpq.append(ase.io.read(infile+"data.pos_"+str(i)+".xyz",step))
+        tmpq.append(ase.io.read(infile+"data.pos_"+str(i).zfill(zfilldig)+".xyz",step))
     for beads in tmpq:
         for sn in beads:
             sn.set_pbc(111)
@@ -55,3 +55,28 @@ def read_dpmd_raw(infile="./",step=":",symbols="O64H128",unit=1,save_dump=True):
     if(save_dump):
         pickle.dump(c,open("raw.save","wb"))
     return c
+
+from itertools import islice 
+
+def read_cpmd(prefix="./water",step=":",symbols="O64H128",natoms=192,unit=Bohr,save_dump=True):
+    c = []
+    poss = open(prefix + ".pos","r").readlines()
+    boxs = open(prefix + ".cel","r").readlines()
+    
+    ns = len(poss)//(natoms+1)
+        
+    pos_np_list = [np.array(line.split(),dtype=np.float) for line in poss]
+    box_np_list = [np.array(line.split(),dtype=np.float) for line in boxs]
+    
+    itpos = iter(pos_np_list)
+    itbox = iter(box_np_list)
+
+    for pos,box in zip([list(islice(itpos,(natoms+1))) for _ in range(ns)][str2slice(step)],[list(islice(itbox,4)) for _ in range(ns)][str2slice(step)]):
+        c.append(ase.Atoms(symbols,cell=np.array(box[1:])*unit,positions=np.array(pos[1:])*unit,pbc=(1,1,1)))
+    if(save_dump):
+         pickle.dump(c,open("cpmd.save","wb"))
+    return c
+
+
+    
+
