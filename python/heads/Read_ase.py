@@ -77,6 +77,21 @@ def read_cpmd(prefix="./water",step=":",symbols="O64H128",natoms=192,unit=Bohr,s
          pickle.dump(c,open("cpmd.save","wb"))
     return c
 
+#add by jianhang 06292020
+import xml.etree.ElementTree as ET
 
-    
+def read_qboxr(infile="./",step=":",unit=Bohr,save_dump=True,if_pbc=True,speciesdict={"oxygen":"O","hydrogen":"H","chlorine":"Cl","sodium":"Na"}):
+    tree = ET.parse(infile)
+    root = tree.getroot()
+    snap = []
+    for it in root.findall("iteration")[str2slice(step)]:
+        info=it.find("atomset")
+        cell=info.find("unit_cell")
+        in_cell = np.fromstring(cell.attrib["a"]+cell.attrib["b"]+cell.attrib["c"],sep=" ").reshape(3,3)*unit
+        in_atoms = []
+        for at in info.findall("atom"):
+            in_atoms.append(ase.Atom(speciesdict.get(at.attrib["species"]),position=np.fromstring(at.find("position").text,sep=" ")*unit))
+        snap.append(ase.Atoms(in_atoms,cell=in_cell,pbc=if_pbc))
+
+    return snap
 
